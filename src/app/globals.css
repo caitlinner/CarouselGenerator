@@ -1,0 +1,33 @@
+@import "tailwindcss";
+
+:root {
+  --purple-deep: #4A1A8A;
+  --purple-light: #8B5DC8;
+  --orange-warm: #F5A623;
+  --coral: #E8734A;
+  --gold: #F5C518;
+  --bg: #F9F7F4;
+  --text-dark: #1a1a2e;
+  --text-muted: #6b7280;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text-dark);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 3px; }
+
+/* Loading shimmer */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.shimmer {
+  background: linear-gradient(90deg, #e5e7eb 25%, #f3f4f6 50%, #e5e7eb 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
