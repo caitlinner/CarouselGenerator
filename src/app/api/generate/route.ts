@@ -1,40 +1,34 @@
 import { NextRequest } from 'next/server';
 
-export const maxDuration = 300;
-
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 const BASE_URL = 'https://generativelanguage.googleapis.com/v1beta';
 
 const NICHE_CONTEXT: Record<string, string> = {
-  'general-sobriety': 'general sobriety and recovery — healing journeys, sober milestones, rebuilding life',
-  'alcohol': 'alcohol addiction — wine mom culture lies, hangover mornings vs sober mornings, the "just one drink" trap',
-  'gambling': 'gambling addiction — chasing losses, sports betting destroying lives, financial ruin',
-  'meth': 'meth addiction — destruction, psychosis, before/after transformation, rebuilding',
-  'heroin': 'heroin/opioid addiction — rock bottom, Narcan saves, losing friends to overdose',
-  'mdma': 'MDMA/party drug addiction — serotonin depletion, rave culture exit, fake vs real happiness',
-  'cannabis': 'cannabis dependency — brain fog lifting, motivation returning, "it\'s just weed" gaslighting',
-  'cocaine': 'cocaine addiction — fake confidence, bathroom stall confessions, 4am existential dread',
-  'fentanyl': 'fentanyl crisis — survival stories, awareness, losing friends to one pill',
+  'general-sobriety': 'General sobriety/recovery. VIRAL ANGLES: the "is this the same person?" before/after disbelief, day counter milestones that make people do math ("wait, 847 days means they quit during COVID"), the specific embarrassing moment that was your last straw, the friend who stopped calling. EMOTIONAL HOOKS: shame spiral specifics, the 3am phone check, waking up and checking your bank account, the apology you never sent.',
+
+  'alcohol': 'Alcohol addiction. VIRAL ANGLES: "mommy wine culture" is manufactured by Big Alcohol targeting women 30-45, the "just one glass" that becomes a bottle by Thursday, the Instagram wine-o-clock memes that normalize dependency, hiding bottles in the recycling before your partner gets home. EMOTIONAL HOOKS: the morning mouth taste, checking your texts with dread, calling in sick on Monday again, your kid seeing you stumble, the exact moment you realized you were drinking alone every night. WHAT HITS: Pop culture references + wine culture critique = proven formula.',
+
+  'gambling': 'Gambling addiction. VIRAL ANGLES: sports betting apps designed like slot machines in your pocket, the "I\'ll win it back" lie you tell yourself at 4am, checking your phone during dinner for live odds, the parlay that was "guaranteed", borrowing money from people who trust you. EMOTIONAL HOOKS: the exact dollar amount you\'ve lost (specificity kills), the notification sound that Pavlov-trained you, refreshing the banking app knowing what you\'ll see, the spreadsheet of losses you\'ll never show anyone.',
+
+  'meth': 'Meth addiction. VIRAL ANGLES: the before/after face that makes people screenshot and share, 72-hour binges where you clean the entire house then don\'t sleep for a week, shadow people, picking at skin in the mirror for hours, the paranoia that everyone knows. EMOTIONAL HOOKS: the first time your mom didn\'t recognize you, teeth crumbling, the weight you lost that people "complimented" not knowing why, the sound of a lighter that still triggers something.',
+
+  'heroin': 'Heroin/opioid addiction. VIRAL ANGLES: started with a prescription after surgery and ended up on the street, the warm blanket feeling vs the cold reality of withdrawal, Narcan saves — the 4 minutes between death and life, long sleeves in July. EMOTIONAL HOOKS: the first time you stole from family, nodding off mid-conversation with your kid, the friend who OD\'d on what you both bought together, the hospital bracelet collection, waking up in the ER and the nurse\'s face.',
+
+  'mdma': 'MDMA/party drug addiction. VIRAL ANGLES: "it\'s not addictive" is the lie that gets you, the Tuesday depression that becomes every day depression, chasing the first roll forever, your serotonin is a credit card and you maxed it out. EMOTIONAL HOOKS: the moment music stopped making you feel anything sober, taking more and feeling less, your jaw hurting on Monday, friends who only text you about the next rave, realizing the "love" you felt was chemistry not connection.',
+
+  'cannabis': 'Cannabis dependency. VIRAL ANGLES: "it\'s just weed" is the most effective gaslighting in addiction — try telling someone you\'re addicted and watch them laugh, waking and baking so long you forgot what mornings feel like sober, spending $400/month on something you said you could quit anytime. EMOTIONAL HOOKS: the first time you dreamed again after quitting, eating food that actually tastes like food, realizing you haven\'t been genuinely bored in years because you smoked every feeling away, the motivation that comes flooding back like someone unclogged a drain.',
+
+  'cocaine': 'Cocaine addiction. VIRAL ANGLES: the "successful" addict — nobody suspects because you still show up to work, $500 weekends that become $500 Tuesdays, bathroom stall confessions where you bond with strangers you\'ll never see again, the 4am group chat that only activates on weekends. EMOTIONAL HOOKS: the drip taste you can\'t forget, the nosebleed at brunch, checking your bank account on Sunday morning, the friends who were really just people who shared a bag, the moment you realized "social use" was a lie you told to everyone including yourself.',
+
+  'fentanyl': 'Fentanyl crisis. VIRAL ANGLES: a pill that looks like Percocet killed your friend — they thought they knew what they were taking, carrying Narcan because you don\'t trust the supply anymore, rainbow fentanyl that looks like candy, losing 3 friends in one year to the same thing. EMOTIONAL HOOKS: the text that starts with "did you hear about...", the phone call from a number you recognize at 2am, the memorial tattoo that keeps getting additions, the empty chair at Thanksgiving that nobody mentions but everyone sees.',
 };
 
 const STYLE_PROMPTS: Record<string, string> = {
   'pixar-animals': `Pixar-quality 3D animated cute animal character, Disney/Pixar movie animation style, soft volumetric lighting, big expressive eyes full of emotion, vibrant saturated colors, cinematic composition, hyper-detailed soft fur or feathers, Pixar movie quality CGI render, adorable but emotionally deep. IMPORTANT: Use the SAME cute animal character across ALL slides — same species, same fur/feather color, same size, same distinctive features. The character must be clearly recognizable as the same individual throughout the entire carousel. NO humans in any slide.`,
-  'iphone-mirror': `Hyper-realistic iPhone 16 Pro mirror selfie photograph, natural bathroom or bedroom mirror, realistic human skin texture with visible pores and natural imperfections, warm indoor lighting, slight phone flash lens flare visible, Instagram-quality candid raw selfie aesthetic. Person looks completely real and human — NOT AI generated. Authentic and emotional. IMPORTANT: Use the SAME person across ALL slides — same gender, same ethnicity, same hair color/style, same approximate age, same facial features. The person must be clearly recognizable as the same individual throughout the entire carousel. Pick either male OR female and stay consistent.`,
-  'sunflower-fields': `Stunning sunflower field landscape photograph, professional DSLR 8K quality, warm golden tones, emotionally uplifting. IMPORTANT: NO people, NO humans, NO characters, NO silhouettes of people in ANY slide. Only sunflowers and natural elements: vast sunflower fields stretching to the horizon, golden petals, green stems and leaves, sky, clouds. Each slide should feature the SAME sunflower field setting but with a DIFFERENT sky — one with golden hour warm light, one with dramatic clouds, one with soft misty morning light, one with bright blue sky and white clouds, one with pink/purple twilight. The sunflower field is the constant; the sky mood changes per slide.`,
-  'majestic-mountains': `Majestic mountain landscape photograph with lush greenery, professional DSLR 8K quality, rich natural colors, emotionally awe-inspiring. IMPORTANT: NO people, NO humans, NO characters, NO silhouettes of people in ANY slide. Only mountains and natural elements: towering peaks, green valleys, alpine meadows, forests, rivers, waterfalls, mist, clouds. Each slide should feature a different dramatic mountain scene — Swiss Alps style with green meadows, misty forest mountain road, snow-capped peaks with wildflowers, mountain lake reflection, rolling green hills with distant peaks.`,
+  'sunflower-fields': `Breathtaking sunflower field landscape photograph, professional DSLR 8K quality, warm golden hour lighting, emotionally uplifting and serene. IMPORTANT: NO people, NO humans, NO characters, NO silhouettes of people in ANY slide. Only sunflower fields and natural landscape elements: endless rows of sunflowers, golden petals, blue sky, soft clouds, rolling hills, warm sunlight filtering through petals. Each slide should feature a DIFFERENT sunflower field scene — vast field stretching to horizon, close-up rows with bokeh background, field at sunrise with golden mist, sunflower field with distant mountains, aerial view of sunflower patterns. Rich warm color grading with golden yellows, deep greens, and soft blue skies.`,
+  'majestic-mountains': `Majestic realistic mountain landscape photograph with lush greenery, professional DSLR 8K quality, epic and awe-inspiring composition. IMPORTANT: NO people, NO humans, NO characters, NO silhouettes of people in ANY slide. Only mountains and natural landscape elements: towering peaks, green valleys, alpine meadows, misty forests, winding rivers, waterfalls, dramatic clouds. Each slide should feature a DIFFERENT mountain scene — foggy mountain road through pine forest, alpine lake with mountain reflection, lush green valley with distant peaks, misty mountain sunrise, dramatic mountain range with rolling clouds. Rich natural color grading with deep greens, moody grays, and atmospheric haze.`,
+  '3d-animated-bee': `Adorable small chubby 3D Pixar-style animated bumblebee character with round black glasses, yellow and black striped body, tiny translucent buzzing wings, holding a small notepad in one hand and a yellow pencil in the other, big sparkling expressive eyes, warm friendly smile. The bee is the SAME character in every slide — same glasses, same size, same proportions, same cute design. IMPORTANT: Use the SAME bee character across ALL slides. The bee appears in DIFFERENT beautiful scenes for each slide: flower garden, rainy day with umbrella, sunrise meadow, cozy library, starlit night sky. Each scene has a different mood and color palette but the bee character is always recognizable. Pixar-quality 3D CGI render, soft volumetric lighting, shallow depth of field, hearts and flowers as recurring motifs. NO humans in any slide.`,
   'inspirational-sunsets': `Breathtaking sunset landscape photograph, professional DSLR 8K quality, warm rich color grading, emotionally uplifting and awe-inspiring vista. IMPORTANT: NO people, NO humans, NO characters, NO silhouettes of people in ANY slide. Only natural landscape elements: sky, clouds, water, mountains, fields, trees, horizon. Each slide should feature a different stunning sunset scene — ocean sunset, mountain sunset, desert sunset, meadow sunset, lake reflection sunset. Dramatic sky with vivid orange pink and purple clouds, god rays breaking through clouds.`,
-};
-
-const NICHE_NAMES: Record<string, string> = {
-  'general-sobriety': 'sobriety',
-  'alcohol': 'alcohol/drinking',
-  'gambling': 'gambling/betting',
-  'meth': 'meth',
-  'heroin': 'heroin/opioids',
-  'mdma': 'MDMA/party drugs',
-  'cannabis': 'weed/cannabis',
-  'cocaine': 'cocaine',
-  'fentanyl': 'fentanyl/opioids',
 };
 
 export async function POST(req: NextRequest) {
@@ -50,53 +44,61 @@ export async function POST(req: NextRequest) {
         const { niche, styleId } = await req.json();
         const nicheCtx = NICHE_CONTEXT[niche] || 'addiction recovery';
         const stylePrompt = STYLE_PROMPTS[styleId] || STYLE_PROMPTS['pixar-animals'];
-        const nicheName = NICHE_NAMES[niche] || niche;
 
         // Step 1: Generate story text
         send({ progress: 5 });
 
-        // Story angles inspired by top-performing sobriety carousel content (@sobi.app style)
-        // Pattern: Bold aspirational hook → Numbered positive benefits → Engagement CTA
+        // Randomize story structure to prevent repetitive outputs
         const STORY_ANGLES = [
           {
-            name: 'smartest-choice',
-            arc: 'Bold statement about quitting → Numbered benefit #1 (physical) → Numbered benefit #2 (relationships) → Numbered benefit #3 (financial/mental) → CTA with engagement question',
-            hook: 'Frame quitting as the SMARTEST decision. Example: "Why Walking Away From Alcohol Was the Smartest Choice I Made". Confident, no regret, aspirational.'
+            name: 'nobody-told-me',
+            arc: 'The thing nobody warned me about → The ugly reality → The moment it hit me → What I know now → CTA',
+            hook: 'Start with "Nobody told me that..." followed by a hyper-specific, unexpected truth about this addiction. NOT a generic observation — something that makes someone in recovery go "holy shit, yes."'
           },
           {
-            name: 'things-that-changed',
-            arc: 'Listicle hook promising specific benefits → Numbered change #1 → Numbered change #2 → Numbered change #3 → CTA with engagement question',
-            hook: 'Listicle promise. Example: "5 Things That Changed When I Stopped Drinking" or "What Nobody Tells You About Quitting Weed". Promise concrete results.'
+            name: 'the-last-time',
+            arc: 'The last time I [used] → What happened in the next hour → The face of the person who found me → The version of me that exists now → CTA',
+            hook: 'Paint a cinematic first slide — a single sensory detail from the last time. The taste, the sound, the text message, the exact location. Make the reader SEE it.'
           },
           {
-            name: 'life-after',
-            arc: 'Aspirational statement about life now → Numbered gain #1 (energy/health) → Numbered gain #2 (clarity/focus) → Numbered gain #3 (self-respect) → CTA with engagement question',
-            hook: 'Paint the aspirational picture. "Life After [substance]" or "What 6 Months Sober Actually Looks Like". Make people WANT what you have.'
+            name: 'the-math',
+            arc: 'The dollar amount → What that could have been → The real cost (not money) → What I invest in now → CTA',
+            hook: 'Open with a SPECIFIC dollar amount or number that makes people gasp. "$47,000 in 3 years." "1,460 mornings." "23 friends\' funerals." Numbers stop scrollers.'
           },
           {
-            name: 'your-turn',
-            arc: 'Empowering direct address → Numbered reason #1 → Numbered reason #2 → Numbered reason #3 → CTA with engagement question',
-            hook: 'Direct empowerment. "Your Turn to Choose Different" or "This Is Your Sign to Quit [substance]". Empowering, not preachy.'
+            name: 'the-text-message',
+            arc: 'The text I sent at [time] → What I meant vs what I said → What they replied (or didn\'t) → The conversation I had sober → CTA',
+            hook: 'Start with a text-message-style confession — the kind of thing someone types at 2am and deletes in the morning. Raw, unfiltered, embarrassing.'
           },
           {
-            name: 'what-i-gained',
-            arc: 'Flip the narrative from loss to gain → Numbered gain #1 → Numbered gain #2 → Numbered gain #3 → CTA with engagement question',
-            hook: 'Reframe. "I Didn\'t Lose Anything When I Quit [substance] — Here\'s What I Gained". Focus on addition, not subtraction.'
+            name: 'before-after-internal',
+            arc: 'What [day/time] looked like using → The ritual/routine of it → What [same day/time] looks like now → The small thing that made me cry with gratitude → CTA',
+            hook: 'Describe a hyper-specific time of day or weekly ritual — "Every Sunday at 11am" or "The first 4 minutes after waking up." Make people recognize their own patterns.'
           },
           {
-            name: 'reasons-i-quit',
-            arc: 'Personal honest statement → Numbered reason #1 (health) → Numbered reason #2 (people) → Numbered reason #3 (self) → CTA with engagement question',
-            hook: 'Relatable honesty. "The Real Reasons I Quit [substance]" — not dramatic, just honest and specific to the addiction.'
+            name: 'the-lie-i-told',
+            arc: 'The lie I told everyone → The lie I told myself → The truth I couldn\'t say out loud → Saying it now → CTA',
+            hook: 'Start with the exact lie. Not "I lied about my drinking" — the SPECIFIC lie. "I\'m just tired." "I only had two." "I can stop whenever I want." One sentence that millions have said.'
           },
           {
-            name: 'new-habits',
-            arc: 'What replaced the addiction → Numbered habit #1 → Numbered habit #2 → Numbered habit #3 → CTA with engagement question',
-            hook: 'Practical and aspirational. "What I Do Instead of [using substance]" or "Habits That Replaced My [substance] Addiction"'
+            name: 'they-dont-know',
+            arc: 'What my coworkers/friends/family see → What they don\'t see → The moment I almost got caught → Why I stopped hiding → CTA',
+            hook: 'Contrast the public persona vs private reality. "My boss thinks I\'m the most reliable person on the team" energy. The functional addict reveal.'
           },
           {
-            name: 'honest-truth',
-            arc: 'Vulnerable but hopeful opener → Numbered truth #1 → Numbered truth #2 → Numbered truth #3 → CTA with engagement question',
-            hook: 'Confession meets hope. "The Honest Truth About My [substance] Addiction" or "I Wish Someone Told Me This About [substance]"'
+            name: 'the-worst-part',
+            arc: 'The worst part isn\'t what you think → It\'s not the [obvious thing] → It\'s the [unexpected gut-punch] → But here\'s what nobody tells you about after → CTA',
+            hook: 'Subvert expectations immediately. "The worst part of [addiction] isn\'t [the obvious]. It\'s [the thing that actually haunts you]." Make people curious about what the real worst part is.'
+          },
+          {
+            name: 'letter-to-self',
+            arc: 'Hey, it\'s future you → I know what you\'re doing right now → Here\'s what\'s about to happen → But you survive. And here\'s proof. → CTA',
+            hook: 'Write directly to the past self in second person. Intimate. Knowing. Like a time traveler who can see everything but can\'t stop it — only offer hope from the other side.'
+          },
+          {
+            name: 'the-object',
+            arc: 'This [object] used to mean [addiction thing] → Now it means [recovery thing] → The day the meaning changed → What it\'ll mean tomorrow → CTA',
+            hook: 'Focus on a single physical object — a lighter, a bottle opener, a phone notification sound, a bathroom mirror. Objects carry emotional weight. Make it symbolic.'
           },
         ];
 
@@ -106,38 +108,28 @@ export async function POST(req: NextRequest) {
         // Style-specific scene instructions
         const SCENE_INSTRUCTIONS: Record<string, string> = {
           'pixar-animals': 'ALL scenes must feature the SAME cute animated animal character (pick ONE specific animal — e.g., a small brown rabbit, a golden retriever puppy, a tiny grey kitten). Describe this exact same character in every scene description. NO humans.',
-          'iphone-mirror': 'ALL scenes must feature the SAME person taking iPhone mirror selfies. Pick ONE specific person (gender, approximate age, hair color/style, ethnicity) and describe them consistently in EVERY scene.',
-          'sunflower-fields': 'ALL scenes must be sunflower field landscapes with DIFFERENT SKY CONDITIONS per slide. NO people, NO humans, NO characters. Only sunflowers, fields, sky, clouds, sunlight. Vary the sky: golden hour, dramatic clouds, misty morning, bright blue, twilight pink/purple.',
-          'majestic-mountains': 'ALL scenes must be majestic mountain landscapes with greenery. NO people, NO humans, NO characters. Only mountains, valleys, forests, meadows, rivers, mist. Each slide should be a different mountain scene.',
+          'sunflower-fields': 'ALL scenes must be ONLY sunflower field landscapes. NO people, NO humans, NO characters, NO silhouettes. Only sunflowers and natural elements: fields, petals, sky, clouds, hills, sunlight. Each slide should be a different sunflower field scene.',
+          'majestic-mountains': 'ALL scenes must be ONLY majestic mountain landscapes with greenery. NO people, NO humans, NO characters, NO silhouettes. Only mountains and natural elements: peaks, valleys, forests, rivers, meadows, clouds, mist. Each slide should be a different mountain scene.',
           'inspirational-sunsets': 'ALL scenes must be ONLY sunset landscapes. NO people, NO humans, NO characters, NO silhouettes. Only natural elements: sky, clouds, water, mountains, fields, trees. Each slide should be a different breathtaking sunset location.',
         };
 
         const sceneInstr = SCENE_INSTRUCTIONS[styleId] || '';
 
-        const storyPrompt = `You write carousel text for addiction recovery content on TikTok and Instagram.
+        // Build the niche name for explicit use in prompts
+        const NICHE_NAMES: Record<string, string> = {
+          'general-sobriety': 'sobriety',
+          'alcohol': 'alcohol/drinking',
+          'gambling': 'gambling/betting',
+          'meth': 'meth',
+          'heroin': 'heroin/opioids',
+          'mdma': 'MDMA/party drugs',
+          'cannabis': 'weed/cannabis',
+          'cocaine': 'cocaine',
+          'fentanyl': 'fentanyl/opioids',
+        };
+        const nicheName = NICHE_NAMES[niche] || niche;
 
-REFERENCE STYLE (study these examples carefully — match this EXACT tone and format):
-
-Example carousel 1 - "Why Walking Away From Alcohol Was the Smartest Choice I Made":
-- Slide 1 (HOOK): "Why Walking Away From Alcohol Was the Smartest Choice I Made" (bold, aspirational, names the substance)
-- Slide 2: "1. Energy Returned" + "I stopped waking up drained. My mornings finally feel alive again."
-- Slide 3: "2. Stronger Relationships" + "Without alcohol, my connections became deeper, more real, and more honest."
-- Slide 4: "3. Financial Freedom" + "Money once wasted on drinks now builds my future."
-- Slide 5 (CTA): "Your new life starts with small habits. Stay focused, stay free—with Sunflower Sober. 🌻" + "What's one habit that helps you stay focused on your growth?"
-
-Example carousel 2 - "Your Turn to Choose Different":
-- Slide 1 (HOOK): "Your Turn to Choose Different" + "Life only got better when I let go. If I can do it, so can you."
-- Slide 2: "1. Energy Returned" + specific supporting sentence
-- Slide 3: "2. Stronger Relationships" + specific supporting sentence
-- Slide 4: "3. Financial Freedom" + specific supporting sentence
-- Slide 5: "4. True Self-Respect" + "Sobriety taught me I don't need an escape—I need to show up for myself."
-
-KEY STYLE RULES:
-- Slide 1: Bold aspirational title that NAMES the substance/behavior. Can have a short supporting line underneath.
-- Slides 2-4: Each has a SHORT NUMBERED HEADING (2-4 words, like "1. Energy Returned", "2. Stronger Relationships", "3. Financial Freedom", "4. True Self-Respect", "4. Check In With Myself"). Then a 1-2 sentence supporting line that's personal and specific.
-- Slide 5 (CTA): A warm closing line mentioning Sunflower Sober app 🌻, PLUS an engagement question to drive comments.
-- TONE: Positive, aspirational, first-person, benefit-focused. Like someone who's thriving in recovery sharing what got better. NOT dark, NOT confessional, NOT shame-based.
-- Keep it conversational — like a real person sharing on social media, not a therapist or brand.
+        const storyPrompt = `You write carousel text for addiction recovery content on TikTok and Instagram. The content must be SPECIFIC to the addiction type — not generic recovery advice.
 
 ADDICTION TYPE: ${nicheName}
 NICHE CONTEXT: ${nicheCtx}
@@ -146,21 +138,40 @@ YOUR STORY ANGLE: ${angle.name.toUpperCase()}
 Arc: ${angle.arc}
 Hook approach: ${angle.hook}
 
-Randomization seed (vary your creative choices): ${randomSeed}
+Randomization seed (use this to vary your creative choices): ${randomSeed}
 
-SLIDE TEXT FORMAT:
-- Slide 1 "text": The hook title. Can be up to ~15 words.
-- Slides 2-4 "text": Format as "N. Short Heading\\n\\nSupporting sentence here." The numbered heading should be 2-4 words. The supporting sentence should be 1-2 sentences, personal and specific to ${nicheName}.
-- Slide 5 "text": "Your new life starts with small habits. Stay focused, stay free—with Sunflower Sober. 🌻\\n\\n[Engagement question about recovery/growth]"
+SLIDE 1 RULES (THE HOOK):
+- MUST explicitly name the addiction. Examples for alcohol: "5 things that changed when I stopped drinking", "How I finally broke free from the weekend drinking cycle", "Alcohol is one of those things that when you remove it from your life, it also removes a lot of problems from your life"
+- Examples for cannabis: "What happened when I finally put down the weed", "5 things nobody tells you about quitting weed"
+- Examples for gambling: "What happened when I deleted the betting apps", "The real cost of my gambling addiction wasn't money"
+- The hook should be a relatable insight, a listicle promise, or a bold statement that NAMES THE SUBSTANCE/BEHAVIOR
+- Can be longer than 10 words — clarity and relatability matter more than brevity on the hook
 
-NICHE-SPECIFIC REQUIREMENT: Slides MUST reference details specific to ${nicheName}. If you swapped the addiction name, the slide should NOT make sense.
+SLIDE 2-4 RULES (NICHE-SPECIFIC CONTENT):
+- Each slide MUST contain details SPECIFIC to this addiction type. If you swapped the addiction name, the slide should NOT make sense.
+- For alcohol: mention hangovers, wine, beer, bars, drinking alone, morning regret, the taste, the bottle, blackouts
+- For cannabis: mention smoking, the high, wake-and-bake, munchies, brain fog, dreams coming back, motivation returning
+- For gambling: mention betting apps, parlays, the casino, checking odds, the losses, the "win it back" feeling
+- For meth: mention staying up for days, the crash, the pipe, shadow people, weight loss, skin picking
+- Slides can be numbered tips ("1. Energy Returned"), lessons learned, or confessional statements
+- Keep text conversational and relatable — like someone sharing their real experience
+- Each slide should be a complete thought that stands on its own
 
-BANNED PHRASES: "one day at a time", "recovery is a journey", "you are not alone", "it gets better", "rock bottom", "breaking free", "chose life", "found the light", "believe in yourself", "light at the end", "stronger than you know", "recovery is possible", "healing journey", "your story isn't over"
+SLIDE 5 (CTA):
+- Text MUST be exactly: "Quit today with the Sunflower Sober app 🌻"
+- No variations. This exact text.
+
+ABSOLUTE BANNED PHRASES (instant reject if any appear):
+"one day at a time", "recovery is a journey", "you are not alone", "it gets better", "rock bottom" (as motivation), "breaking free", "chose life", "found the light", "finally showing up", "rewrite your story", "you're worth it", "believe in yourself", "light at the end", "stronger than you know", "recovery is possible", "take it one step", "new chapter", "healing journey", "self-love", "your story isn't over", "show up for myself", "choose smarter", "staying consistent", "morning gratitude"
+
+If the slide text could apply to ANY addiction or even just general wellness, REWRITE IT to be specific to ${nicheName}.
+
+VOICE: Write like someone who's been through THIS SPECIFIC addiction and is sharing what they learned. Not a therapist, not a brand — a real person.
 
 ${sceneInstr ? `IMAGE SCENE RULES: ${sceneInstr}` : ''}
 
-Return ONLY valid JSON (no markdown, no code fences):
-{"title":"carousel title","slides":[{"text":"slide text","scene":"detailed image scene description for AI image generation"}]}`;
+Return ONLY valid JSON:
+{"title":"carousel title","slides":[{"text":"overlay text","scene":"detailed image scene description"}]}`;
 
         const storyRes = await fetch(
           `${BASE_URL}/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`,
@@ -169,7 +180,7 @@ Return ONLY valid JSON (no markdown, no code fences):
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               contents: [{ parts: [{ text: storyPrompt }] }],
-              generationConfig: { temperature: 0.9, maxOutputTokens: 8192 },
+              generationConfig: { temperature: 0.95, maxOutputTokens: 2048 },
             }),
           }
         );
@@ -181,16 +192,14 @@ Return ONLY valid JSON (no markdown, no code fences):
         }
 
         const storyData = await storyRes.json();
-        // Gemini thinking models return thought parts first, then text parts
-        const storyParts = storyData.candidates?.[0]?.content?.parts || [];
-        const storyText = storyParts.filter((p: Record<string, unknown>) => typeof p.text === 'string' && !p.thought).pop()?.text || '';
+        const storyText = storyData.candidates?.[0]?.content?.parts?.[0]?.text || '';
         const cleaned = storyText.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
 
         let story: { title: string; slides: Array<{ text: string; scene: string }> };
         try {
           story = JSON.parse(cleaned);
         } catch {
-          send({ error: 'Failed to parse story. Raw (first 300 chars): ' + storyText.slice(0, 300) });
+          send({ error: 'Failed to parse story' });
           controller.close();
           return;
         }
@@ -201,7 +210,7 @@ Return ONLY valid JSON (no markdown, no code fences):
           slideTexts: story.slides.map(s => s.text),
         });
 
-        // Step 2: Generate images
+        // Step 2: Generate images using Imagen 4
         const images: string[] = [];
 
         for (let i = 0; i < Math.min(5, story.slides.length); i++) {
@@ -212,17 +221,15 @@ Return ONLY valid JSON (no markdown, no code fences):
 
 Scene: ${slide.scene}
 
-TEXT OVERLAY INSTRUCTIONS:
-${i === 0 ? `This is the HOOK slide. Display the title text in large, bold white letters with strong black outline/shadow, centered on the image: "${slide.text}"` :
-  i === story.slides.length - 1 ? `This is the CTA slide. Display the text in white with black outline. Include the Sunflower Sober branding: "${slide.text}"` :
-  `This is a NUMBERED BENEFIT slide. Display a short numbered heading in a white rectangular box/banner (black bold text on white background), positioned in the upper-center area. Below it, display the supporting text in large white letters with black outline/shadow: "${slide.text}"`}
+IMPORTANT: Display this text prominently on the image in large bold white letters with a strong black outline/stroke for readability: "${slide.text}"
 
-The text must be large, clearly readable on mobile. 3:4 portrait aspect ratio for Instagram/TikTok carousel.
-This is slide ${i + 1} of 5. Visual consistency across all slides is critical.`;
+The text must be the focal point, large, centered, and clearly readable on mobile. White text with thick black outline. The background scene should support the emotional message. 3:4 portrait aspect ratio for Instagram/TikTok carousel.
+
+This is slide ${i + 1} of 5 in a carousel series. Visual consistency across all slides is critical.`;
 
           let imageData: string | null = null;
 
-          // Try Imagen 4
+          // Try Imagen 4 (paid, best quality)
           try {
             const imgRes = await fetch(
               `${BASE_URL}/models/imagen-4.0-generate-001:predict?key=${GEMINI_API_KEY}`,
@@ -283,7 +290,7 @@ This is slide ${i + 1} of 5. Visual consistency across all slides is critical.`;
             }
           }
 
-          // Second fallback: gemini-2.5-flash-image
+          // Second fallback: gemini-2.5-flash-image (free tier)
           if (!imageData) {
             try {
               const fb2Res = await fetch(

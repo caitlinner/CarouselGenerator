@@ -44,6 +44,13 @@ const IMAGE_STYLES = [
     desc: 'Breathtaking sunset landscapes with dramatic skies — no humans, just nature',
     preview: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
   },
+  {
+    id: '3d-animated-bee',
+    emoji: '🐝',
+    label: '3D Animated Bee',
+    desc: 'Adorable chubby 3D bee with glasses in different scenes delivering sobriety wisdom',
+    preview: 'linear-gradient(135deg, #FFD700 0%, #FF8C00 100%)',
+  },
 ];
 
 function CreateContent() {
