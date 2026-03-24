@@ -16,9 +16,9 @@ const NICHE_CONTEXT: Record<string, string> = {
 };
 
 const STYLE_PROMPTS: Record<string, string> = {
-  'pixar-animals': `Pixar-quality 3D animated cute animal character, Disney/Pixar movie animation style, soft volumetric lighting, big expressive eyes full of emotion, vibrant saturated colors, cinematic composition, hyper-detailed soft fur or feathers, Pixar movie quality CGI render, adorable but emotionally deep.`,
-  'iphone-mirror': `Hyper-realistic iPhone 16 Pro mirror selfie photograph, natural bathroom or bedroom mirror, realistic human skin texture with visible pores and natural imperfections, warm indoor lighting, slight phone flash lens flare visible, Instagram-quality candid raw selfie aesthetic. Person looks completely real and human — NOT AI generated. Authentic and emotional.`,
-  'inspirational-sunsets': `Breathtaking golden hour sunset landscape photograph, dramatic sky with vivid orange pink and purple clouds, silhouetted horizon with ocean or mountains or open field, professional DSLR 8K quality, warm rich color grading, god rays breaking through clouds, emotionally uplifting and awe-inspiring vista.`,
+  'pixar-animals': `Pixar-quality 3D animated cute animal character, Disney/Pixar movie animation style, soft volumetric lighting, big expressive eyes full of emotion, vibrant saturated colors, cinematic composition, hyper-detailed soft fur or feathers, Pixar movie quality CGI render, adorable but emotionally deep. IMPORTANT: Use the SAME cute animal character across ALL slides — same species, same fur/feather color, same size, same distinctive features. The character must be clearly recognizable as the same individual throughout the entire carousel. NO humans in any slide.`,
+  'iphone-mirror': `Hyper-realistic iPhone 16 Pro mirror selfie photograph, natural bathroom or bedroom mirror, realistic human skin texture with visible pores and natural imperfections, warm indoor lighting, slight phone flash lens flare visible, Instagram-quality candid raw selfie aesthetic. Person looks completely real and human — NOT AI generated. Authentic and emotional. IMPORTANT: Use the SAME person across ALL slides — same gender, same ethnicity, same hair color/style, same approximate age, same facial features. The person must be clearly recognizable as the same individual throughout the entire carousel. Pick either male OR female and stay consistent.`,
+  'inspirational-sunsets': `Breathtaking sunset landscape photograph, professional DSLR 8K quality, warm rich color grading, emotionally uplifting and awe-inspiring vista. IMPORTANT: NO people, NO humans, NO characters, NO silhouettes of people in ANY slide. Only natural landscape elements: sky, clouds, water, mountains, fields, trees, horizon. Each slide should feature a different stunning sunset scene — ocean sunset, mountain sunset, desert sunset, meadow sunset, lake reflection sunset. Dramatic sky with vivid orange pink and purple clouds, god rays breaking through clouds.`,
 };
 
 export async function POST(req: NextRequest) {
@@ -38,48 +38,52 @@ export async function POST(req: NextRequest) {
         // Step 1: Generate story text
         send({ progress: 5 });
 
-        const storyPrompt = `You are an elite direct-response copywriter specializing in addiction recovery content that stops the scroll and gets saved/shared. You write like Gary Halbert meets modern TikTok — raw, specific, emotionally precise.
+        // Randomize story structure to prevent repetitive outputs
+        const STORY_ANGLES = [
+          { name: 'confession', arc: 'Confession → Shame spiral → Rock bottom moment → The ugly first week → CTA', hook: 'Start with a specific shameful confession nobody admits out loud' },
+          { name: 'letter-to-past', arc: 'Letter to past self → What you didn\'t know → The moment you wish you could undo → What you\'d say now → CTA', hook: 'Write the opening line of a letter to your past self' },
+          { name: 'last-time', arc: 'The last time I used → What happened next → The hospital/police/wake-up → 6 months later → CTA', hook: 'Describe a hyper-specific "last time" scene with sensory detail' },
+          { name: 'things-nobody-tells', arc: '5 things nobody tells you → Truth #1 (body) → Truth #2 (relationships) → Truth #3 (identity) → CTA', hook: 'Open with "Nobody warned me about..." and name something unexpected' },
+          { name: 'timeline', arc: 'Day 1 → Day 30 → Day 90 → Day 365 → CTA', hook: 'Start with a visceral Day 1 scene — shaking hands, cold sweat, clock watching' },
+          { name: 'comparison', arc: 'Saturday night then → Sunday morning then → Saturday night now → Sunday morning now → CTA', hook: 'Paint a vivid "then" scene with specific ugly details' },
+          { name: 'relationship', arc: 'What they saw → What I hid → The conversation that broke me → Earning trust back → CTA', hook: 'Start with what someone you love said to you at your worst' },
+          { name: 'money', arc: 'Monthly cost of addiction → What I lost → The final receipt → What I spend it on now → CTA', hook: 'Open with a specific dollar amount or financial gut punch' },
+        ];
 
-Create a 5-slide Instagram/TikTok carousel for: ${nicheCtx}.
+        const angle = STORY_ANGLES[Math.floor(Math.random() * STORY_ANGLES.length)];
+        const randomSeed = Math.floor(Math.random() * 100000);
 
-COPYWRITING RULES (follow these exactly):
-- Lead with pain or desire. Never open generic.
-- Use SPECIFIC details: numbers, timelines, scenes, sensory details. "Day 47 in a parking lot at 2am" beats "Early recovery is hard."
-- Write how real people talk, not how brands talk. No corporate wellness speak.
-- Every line's job is to make them read the next slide.
-- NO typos. NO grammatical errors. Proofread every word.
-- Keep text SHORT — max 15 words per slide overlay. Punchy. Instagram-story style.
+        // Style-specific scene instructions
+        const SCENE_INSTRUCTIONS: Record<string, string> = {
+          'pixar-animals': 'ALL scenes must feature the SAME cute animated animal character (pick ONE specific animal — e.g., a small brown rabbit, a golden retriever puppy, a tiny grey kitten). Describe this exact same character in every scene description. NO humans.',
+          'iphone-mirror': 'ALL scenes must feature the SAME person taking iPhone mirror selfies. Pick ONE specific person (gender, approximate age, hair color/style, ethnicity) and describe them consistently in EVERY scene. The person should look identical across all 5 slides.',
+          'inspirational-sunsets': 'ALL scenes must be ONLY sunset landscapes. NO people, NO humans, NO characters, NO silhouettes. Only natural elements: sky, clouds, water, mountains, fields, trees. Each slide should be a different breathtaking sunset location.',
+        };
 
-HOOK FORMULAS (use one for Slide 1):
-- Controversial truth: "Nobody talks about this side of sobriety"
-- Specific number: "Day 47 is when everything changed"  
-- Pattern interrupt: "Stop saying 'I'm fine' when you're dying inside"
-- Identity shift: "You're not broken. You got hurt and found the wrong medicine."
-- Before/after gap: "I went from [dark specific] to [light specific]"
+        const sceneInstr = SCENE_INSTRUCTIONS[styleId] || '';
 
-STORY ARC:
-- Slide 1: HOOK — scroll-stopping opening line. Bold, specific, emotional. Use a hook formula above.
-- Slide 2: PAIN — name the exact pain with vivid sensory detail. Make them feel seen. "The 3am ceiling stare when your body won't let you sleep."
-- Slide 3: TURNING POINT — the moment of shift. Specific, not generic. A real scene, a real decision, a real conversation.
-- Slide 4: GROWTH — what recovery actually looks like. Not "everything is perfect" but honest progress. Real, relatable, earned.
-- Slide 5: CTA — the text MUST be exactly: "Quit today with the Sunflower Sober app 🌻" (use this EXACT text, do not change a single word)
+        const storyPrompt = `You write recovery content that sounds like it came from a real person's Instagram story at 2am — not a brand, not a therapist, not AI. Raw. Unpolished. Real.
 
-For each slide, also describe the background scene/image in vivid detail.
+NICHE: ${nicheCtx}
 
-Return ONLY valid JSON (no markdown fences):
-{
-  "title": "Carousel title",
-  "slides": [
-    {"text": "The bold overlay text (max 15 words, punchy)", "scene": "Detailed background image description"}
-  ]
-}
+YOUR STORY ANGLE (use this exact structure): ${angle.name.toUpperCase()}
+Arc: ${angle.arc}
+Hook approach: ${angle.hook}
 
-QUALITY CHECK before returning:
-- Is Slide 1 a genuine scroll-stopper? Would YOU stop scrolling?
-- Is every slide specific, not generic? No "recovery is a journey" clichés.
-- Does the story flow naturally from hook → pain → turning point → growth → CTA?
-- Is Slide 5 text EXACTLY "Quit today with the Sunflower Sober app 🌻"?
-- Zero typos?`;
+Randomization seed (use this to vary your creative choices): ${randomSeed}
+
+RULES:
+- Max 12 words per slide text. Fragments > full sentences. How people actually text, not how they write essays.
+- NO clichés: banned phrases include "one day at a time", "recovery is a journey", "you are not alone", "it gets better", "rock bottom", "breaking free", "chose life", "found the light". If you've seen it on a motivational poster, don't use it.
+- Be NICHE-SPECIFIC. A gambling slide should mention specific gambling details (parlay bets, the slots sound, the app notification). An alcohol slide should mention specific drinking details (the wine bottle hidden in the closet, the mouthwash before work). Generic recovery talk = failure.
+- Slide 5 text MUST be exactly: "Quit today with the Sunflower Sober app 🌻"
+- Write like a human who's lived it. Typo-free but conversational.
+- Each generation should feel completely different from any other. Vary the specific details, emotions, scenes, and word choices.
+
+${sceneInstr ? `IMAGE SCENE RULES: ${sceneInstr}` : ''}
+
+Return ONLY valid JSON:
+{"title":"carousel title","slides":[{"text":"overlay text","scene":"detailed image scene description"}]}`;
 
         const storyRes = await fetch(
           `${BASE_URL}/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`,
@@ -131,7 +135,9 @@ Scene: ${slide.scene}
 
 IMPORTANT: Display this text prominently on the image in large bold white letters with a strong black outline/stroke for readability: "${slide.text}"
 
-The text must be the focal point, large, centered, and clearly readable on mobile. White text with thick black outline. The background scene should support the emotional message. 3:4 portrait aspect ratio for Instagram/TikTok carousel.`;
+The text must be the focal point, large, centered, and clearly readable on mobile. White text with thick black outline. The background scene should support the emotional message. 3:4 portrait aspect ratio for Instagram/TikTok carousel.
+
+This is slide ${i + 1} of 5 in a carousel series. Visual consistency across all slides is critical.`;
 
           let imageData: string | null = null;
 
