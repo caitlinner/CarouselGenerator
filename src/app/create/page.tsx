@@ -37,6 +37,13 @@ const IMAGE_STYLES = [
     desc: 'Epic mountain landscapes with lush greenery — no humans, just nature',
     preview: 'linear-gradient(135deg, #2D5016 0%, #6B8E23 100%)',
   },
+  {
+    id: 'inspirational-sunsets',
+    emoji: '🌅',
+    label: 'Inspirational Sunsets',
+    desc: 'Breathtaking sunset landscapes with dramatic skies — no humans, just nature',
+    preview: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+  },
 ];
 
 function CreateContent() {
