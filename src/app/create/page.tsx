@@ -24,18 +24,18 @@ const IMAGE_STYLES = [
     preview: 'linear-gradient(135deg, #FFB347 0%, #FF6B6B 100%)',
   },
   {
-    id: 'iphone-mirror',
-    emoji: '📱',
-    label: 'iPhone Mirror Selfie',
-    desc: 'Raw, real mirror selfies with sobriety text — UGC that feels human',
-    preview: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+    id: 'sunflower-fields',
+    emoji: '🌻',
+    label: 'Sunflower Fields',
+    desc: 'Warm golden sunflower field landscapes — no humans, just nature',
+    preview: 'linear-gradient(135deg, #F5C518 0%, #FF8C00 100%)',
   },
   {
-    id: 'inspirational-sunsets',
-    emoji: '🌅',
-    label: 'Inspirational Sunsets',
-    desc: 'Golden hour landscapes with bold sobriety quotes overlaid',
-    preview: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+    id: 'majestic-mountains',
+    emoji: '🏔️',
+    label: 'Majestic Mountains',
+    desc: 'Epic mountain landscapes with lush greenery — no humans, just nature',
+    preview: 'linear-gradient(135deg, #2D5016 0%, #6B8E23 100%)',
   },
 ];
 
