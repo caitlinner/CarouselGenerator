@@ -1,5 +1,7 @@
 import { NextRequest } from 'next/server';
 
+export const maxDuration = 300;
+
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 const BASE_URL = 'https://generativelanguage.googleapis.com/v1beta';
 
