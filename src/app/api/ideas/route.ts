@@ -3,15 +3,15 @@ import { NextRequest, NextResponse } from 'next/server';
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
 const NICHE_CONTEXT: Record<string, string> = {
-  'general-sobriety': `General sobriety and recovery. Topics: sober milestones, healing journeys, the moment of clarity, rebuilding trust, sober dating, holidays sober, PAWS (post-acute withdrawal), sponsor relationships, meeting culture, one day at a time philosophy.`,
-  'alcohol': `Alcohol addiction and recovery. Topics: wine mom culture lies, hangover mornings vs sober mornings, bar culture exit, the "just one drink" trap, liver recovery timeline, drunk texts you'll never send again, alcohol-free alternatives, social pressure at parties, binge drinking wake-up calls.`,
-  'gambling': `Gambling addiction and recovery. Topics: chasing losses, sports betting apps destroying lives, the casino high vs real joy, financial ruin and rebuilding, hiding bets from family, online gambling at 3am, scratch ticket addiction, the lie of "one more bet", banned from casinos stories.`,
-  'meth': `Meth addiction and recovery. Topics: teeth and skin destruction, psychosis episodes, the 3-day binge crash, meth mouth recovery, before/after face transformations, losing custody to meth, trailer park to stable life, the paranoia of using, tweaking at work.`,
-  'heroin': `Heroin and opioid addiction recovery. Topics: needle marks healing, Narcan saves, the nod vs being present, methadone/suboxone journeys, losing friends to overdose, fentanyl-laced supply fear, track marks and long sleeves in summer, the warmth of the high vs real human warmth.`,
-  'mdma': `MDMA and party drug recovery. Topics: serotonin syndrome recovery, rave culture exit, fake happiness vs real joy, Tuesday blues becoming every day, losing the magic, brain zaps, realizing ecstasy stole your ability to feel, party friends vs real friends.`,
-  'cannabis': `Cannabis addiction recovery (often dismissed). Topics: "it's just weed" gaslighting, brain fog lifting, motivation returning after quitting, the ritual of rolling up, CHS (cannabinoid hyperemesis), weed dependency vs addiction debate, dreaming again after quitting, appetite without being high.`,
-  'cocaine': `Cocaine addiction recovery. Topics: bathroom stall confessions, the fake confidence, spending $500 in one night, coke jaw, nosebleeds, 4am existential dread, the crash after the high, mixing coke and alcohol dangers, Wall Street/party culture normalization.`,
-  'fentanyl': `Fentanyl crisis awareness and recovery. Topics: friends dying from one pill, pressed pills looking like prescriptions, carrying Narcan everywhere, fentanyl test strips, the 2-minute overdose window, rainbow fentanyl awareness, losing a generation, the most dangerous drug in history, parent grief stories.`,
+  'general-sobriety': `General sobriety/recovery. VIRAL ANGLES: the "is this the same person?" before/after disbelief, day counter milestones that make people do math ("wait, 847 days means they quit during COVID"), the specific embarrassing moment that was your last straw, the friend who stopped calling. EMOTIONAL HOOKS: shame spiral specifics, the 3am phone check, waking up and checking your bank account, the apology you never sent.`,
+  'alcohol': `Alcohol addiction. VIRAL ANGLES: "mommy wine culture" is manufactured by Big Alcohol targeting women 30-45, the "just one glass" that becomes a bottle by Thursday, hiding bottles in the recycling before your partner gets home, the Instagram wine-o-clock memes that normalize dependency. EMOTIONAL HOOKS: the morning mouth taste, checking your texts with dread, calling in sick on Monday again, your kid seeing you stumble, the exact moment you realized you were drinking alone every night.`,
+  'gambling': `Gambling addiction. VIRAL ANGLES: sports betting apps designed like slot machines in your pocket, the "I'll win it back" lie at 4am, checking your phone during dinner for live odds, the parlay that was "guaranteed", borrowing money from people who trust you. EMOTIONAL HOOKS: the exact dollar amount you've lost (specificity kills), the notification sound that Pavlov-trained you, refreshing the banking app knowing what you'll see, the spreadsheet of losses you'll never show anyone.`,
+  'meth': `Meth addiction. VIRAL ANGLES: the before/after face that makes people screenshot and share, 72-hour binges where you clean the entire house then don't sleep for a week, shadow people, picking at skin in the mirror for hours, the paranoia that everyone knows. EMOTIONAL HOOKS: the first time your mom didn't recognize you, teeth crumbling, the weight you lost that people "complimented" not knowing why, the sound of a lighter that still triggers something.`,
+  'heroin': `Heroin/opioid addiction. VIRAL ANGLES: started with a prescription after surgery and ended up on the street, the warm blanket feeling vs the cold reality of withdrawal, Narcan saves — the 4 minutes between death and life, long sleeves in July. EMOTIONAL HOOKS: the first time you stole from family, nodding off mid-conversation with your kid, the friend who OD'd on what you both bought together, the hospital bracelet collection, waking up in the ER and the nurse's face.`,
+  'mdma': `MDMA/party drug addiction. VIRAL ANGLES: "it's not addictive" is the lie that gets you, the Tuesday depression that becomes every day depression, chasing the first roll forever, your serotonin is a credit card and you maxed it out. EMOTIONAL HOOKS: the moment music stopped making you feel anything sober, taking more and feeling less, your jaw hurting on Monday, friends who only text you about the next rave, realizing the "love" you felt was chemistry not connection.`,
+  'cannabis': `Cannabis dependency. VIRAL ANGLES: "it's just weed" is the most effective gaslighting in addiction — try telling someone you're addicted and watch them laugh, waking and baking so long you forgot what mornings feel like sober, spending $400/month on something you said you could quit anytime. EMOTIONAL HOOKS: the first time you dreamed again after quitting, eating food that actually tastes like food, realizing you haven't been genuinely bored in years because you smoked every feeling away, the motivation that comes flooding back like someone unclogged a drain.`,
+  'cocaine': `Cocaine addiction. VIRAL ANGLES: the "successful" addict — nobody suspects because you still show up to work, $500 weekends that become $500 Tuesdays, bathroom stall confessions where you bond with strangers you'll never see again, the 4am group chat that only activates on weekends. EMOTIONAL HOOKS: the drip taste you can't forget, the nosebleed at brunch, checking your bank account on Sunday morning, the friends who were really just people who shared a bag, the moment you realized "social use" was a lie you told to everyone including yourself.`,
+  'fentanyl': `Fentanyl crisis. VIRAL ANGLES: a pill that looks like Percocet killed your friend — they thought they knew what they were taking, carrying Narcan because you don't trust the supply anymore, rainbow fentanyl that looks like candy, losing 3 friends in one year to the same thing. EMOTIONAL HOOKS: the text that starts with "did you hear about...", the phone call from a number you recognize at 2am, the memorial tattoo that keeps getting additions, the empty chair at Thanksgiving that nobody mentions but everyone sees.`,
 };
 
 export async function POST(req: NextRequest) {
@@ -21,36 +21,55 @@ export async function POST(req: NextRequest) {
 
     const nicheContext = NICHE_CONTEXT[niche] || `Addiction recovery content about: ${niche}`;
 
-    const prompt = `You are a viral social media content strategist specializing in addiction recovery and sobriety content. Generate exactly 5 carousel story ideas for this specific niche:
+    const prompt = `You generate carousel concepts for addiction recovery content that goes viral on Instagram and TikTok. You study what actually gets millions of views — not what SHOULD work in theory.
 
 NICHE: ${nicheContext}
 
-Each carousel has exactly 5 slides that tell a cohesive VISUAL story — designed for Instagram/TikTok carousel posts in the recovery/sobriety space.
+Generate exactly 5 carousel story ideas. Each carousel has 5 slides.
 
-The ideas should be:
-- Emotionally gut-punching (the kind that makes people stop scrolling)
-- Relatable to people in recovery or their families
-- Visually story-driven (each slide should be a distinct powerful image)
-- Shareable — the kind of content people save and send to friends
+WHAT MAKES A BANGER CAROUSEL (from studying 300+ viral recovery posts):
+1. SLIDE 1 HOOK must use one of these proven formats:
+   - "Nobody told me that [specific unexpected truth]"
+   - "The worst part about [X] isn't [obvious]. It's [gut-punch]"
+   - "$[specific number] in [timeframe]" (money/time/people lost)
+   - "I told everyone [the lie]" (functional addict reveal)
+   - Direct address that calls out a specific behavior ("You check your [X] before your feet hit the floor")
+   
+2. NICHE SPECIFICITY — Every slide must contain details ONLY someone in this specific niche would recognize. A gambling carousel slide should mention parlays, the DraftKings notification sound, the casino carpet pattern. An alcohol slide should mention the recycling bin, mouthwash before work, the "just wine" excuse.
 
-Return ONLY valid JSON (no markdown, no code fences) in this exact format:
+3. EMOTIONAL ARC — Not just sad→hopeful. The best arcs are: shame→recognition→raw honesty→unexpected hope OR humor→relatability→gut-punch→redemption
+
+4. THE TEXT MUST CARRY THE CAROUSEL — The images support the text, not the other way around. If the text alone doesn't make someone stop scrolling, the image won't save it.
+
+5. SLIDE 5 TEXT must always be: "Quit today with the Sunflower Sober app 🌻"
+
+ABSOLUTE BANNED PHRASES (instant reject):
+"one day at a time", "recovery is a journey", "you are not alone", "it gets better", "rock bottom" (as motivation), "breaking free", "chose life", "found the light", "finally showing up", "rewrite your story", "you're worth it", "believe in yourself", "light at the end", "stronger than you know", "recovery is possible", "new chapter", "healing journey", "self-love", "your story isn't over"
+
+Return ONLY valid JSON (no markdown, no code fences):
 {
   "ideas": [
     {
-      "title": "Compelling carousel title that hooks immediately",
+      "title": "The hook that would make someone screenshot this",
       "slides": [
-        "Detailed image description for slide 1 — describe the scene, person, emotion, environment",
-        "Detailed image description for slide 2",
-        "Detailed image description for slide 3",
-        "Detailed image description for slide 4",
-        "Detailed image description for slide 5 — this should be the emotional payoff/resolution"
+        "Detailed image scene for slide 1",
+        "Detailed image scene for slide 2",
+        "Detailed image scene for slide 3",
+        "Detailed image scene for slide 4",
+        "Detailed image scene for slide 5 — should visually represent hope/the Sunflower app"
       ],
-      "style": "Suggested photography/art style for this specific story"
+      "slideTexts": [
+        "Slide 1 text (THE HOOK — max 10 words, must stop scrolling)",
+        "Slide 2 text (escalation or reveal)",
+        "Slide 3 text (the gut-punch)",
+        "Slide 4 text (the turn — raw honesty or unexpected hope)",
+        "Quit today with the Sunflower Sober app 🌻"
+      ],
+      "style": "Suggested visual style",
+      "whyItWorks": "One sentence explaining the viral mechanic"
     }
   ]
-}
-
-Make each slide description vivid and specific enough to generate a compelling AI image. Vary the narrative structures: use before/after, day-in-the-life, timeline progression, emotional journey, contrast stories, awareness, or family impact angles.`;
+}`;
 
     const res = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`,
