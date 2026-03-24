@@ -182,7 +182,7 @@ Return ONLY valid JSON:
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               contents: [{ parts: [{ text: storyPrompt }] }],
-              generationConfig: { temperature: 0.95, maxOutputTokens: 2048 },
+              generationConfig: { temperature: 0.95, maxOutputTokens: 2048, thinkingConfig: { thinkingBudget: 0 } },
             }),
           }
         );
@@ -194,14 +194,19 @@ Return ONLY valid JSON:
         }
 
         const storyData = await storyRes.json();
-        const storyText = storyData.candidates?.[0]?.content?.parts?.[0]?.text || '';
+        // Gemini thinking models return thought parts separately — skip them
+        const parts = storyData.candidates?.[0]?.content?.parts || [];
+        const storyText = parts
+          .filter((p: { thought?: boolean }) => !p.thought)
+          .map((p: { text?: string }) => p.text || '')
+          .join('');
         const cleaned = storyText.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
 
         let story: { title: string; slides: Array<{ text: string; scene: string }> };
         try {
           story = JSON.parse(cleaned);
         } catch {
-          send({ error: 'Failed to parse story' });
+          send({ error: 'Failed to parse story. Raw: ' + cleaned.slice(0, 300) });
           controller.close();
           return;
         }
