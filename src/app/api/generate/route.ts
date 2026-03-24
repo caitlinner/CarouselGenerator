@@ -112,9 +112,24 @@ export async function POST(req: NextRequest) {
 
         const sceneInstr = SCENE_INSTRUCTIONS[styleId] || '';
 
-        const storyPrompt = `You write text memes for addiction recovery carousels. Your text goes viral because it sounds like someone's private journal entry that accidentally got posted — not a brand, not a therapist, not a motivational poster.
+        // Build the niche name for explicit use in prompts
+        const NICHE_NAMES: Record<string, string> = {
+          'general-sobriety': 'sobriety',
+          'alcohol': 'alcohol/drinking',
+          'gambling': 'gambling/betting',
+          'meth': 'meth',
+          'heroin': 'heroin/opioids',
+          'mdma': 'MDMA/party drugs',
+          'cannabis': 'weed/cannabis',
+          'cocaine': 'cocaine',
+          'fentanyl': 'fentanyl/opioids',
+        };
+        const nicheName = NICHE_NAMES[niche] || niche;
 
-NICHE: ${nicheCtx}
+        const storyPrompt = `You write carousel text for addiction recovery content on TikTok and Instagram. The content must be SPECIFIC to the addiction type — not generic recovery advice.
+
+ADDICTION TYPE: ${nicheName}
+NICHE CONTEXT: ${nicheCtx}
 
 YOUR STORY ANGLE: ${angle.name.toUpperCase()}
 Arc: ${angle.arc}
@@ -122,28 +137,33 @@ Hook approach: ${angle.hook}
 
 Randomization seed (use this to vary your creative choices): ${randomSeed}
 
-SLIDE 1 RULES (THE HOOK — THIS IS EVERYTHING):
-- Must be impossible to scroll past. The reader should feel CALLED OUT or IMPOSSIBLY CURIOUS.
-- Proven hook formats that work: "Nobody told me that...", "The worst part about [X] isn't...", "$[specific amount] in [timeframe]", "I told everyone I was [lie]", "What [day] looks like at [specific time]"
-- The hook must be SPECIFIC to the niche. A gambling hook should not work for alcohol. An alcohol hook should not work for meth.
-- Max 10 words. Fragments hit harder than sentences.
+SLIDE 1 RULES (THE HOOK):
+- MUST explicitly name the addiction. Examples for alcohol: "5 things that changed when I stopped drinking", "How I finally broke free from the weekend drinking cycle", "Alcohol is one of those things that when you remove it from your life, it also removes a lot of problems from your life"
+- Examples for cannabis: "What happened when I finally put down the weed", "5 things nobody tells you about quitting weed"
+- Examples for gambling: "What happened when I deleted the betting apps", "The real cost of my gambling addiction wasn't money"
+- The hook should be a relatable insight, a listicle promise, or a bold statement that NAMES THE SUBSTANCE/BEHAVIOR
+- Can be longer than 10 words — clarity and relatability matter more than brevity on the hook
 
-SLIDE 2-4 RULES (THE GUT PUNCH):
-- Max 10 words per slide. Fragments > sentences. How people text, not write.
-- Each slide must escalate emotional intensity OR reveal something unexpected
-- Be NICHE-SPECIFIC with details only someone who lived it would know (see niche context above)
-- NO transitions like "but then" or "and then" — each slide should hit like its own statement
+SLIDE 2-4 RULES (NICHE-SPECIFIC CONTENT):
+- Each slide MUST contain details SPECIFIC to this addiction type. If you swapped the addiction name, the slide should NOT make sense.
+- For alcohol: mention hangovers, wine, beer, bars, drinking alone, morning regret, the taste, the bottle, blackouts
+- For cannabis: mention smoking, the high, wake-and-bake, munchies, brain fog, dreams coming back, motivation returning
+- For gambling: mention betting apps, parlays, the casino, checking odds, the losses, the "win it back" feeling
+- For meth: mention staying up for days, the crash, the pipe, shadow people, weight loss, skin picking
+- Slides can be numbered tips ("1. Energy Returned"), lessons learned, or confessional statements
+- Keep text conversational and relatable — like someone sharing their real experience
+- Each slide should be a complete thought that stands on its own
 
 SLIDE 5 (CTA):
 - Text MUST be exactly: "Quit today with the Sunflower Sober app 🌻"
 - No variations. This exact text.
 
 ABSOLUTE BANNED PHRASES (instant reject if any appear):
-"one day at a time", "recovery is a journey", "you are not alone", "it gets better", "rock bottom" (as motivation), "breaking free", "chose life", "found the light", "finally showing up", "rewrite your story", "you're worth it", "believe in yourself", "light at the end", "stronger than you know", "recovery is possible", "take it one step", "new chapter", "healing journey", "self-love", "your story isn't over"
+"one day at a time", "recovery is a journey", "you are not alone", "it gets better", "rock bottom" (as motivation), "breaking free", "chose life", "found the light", "finally showing up", "rewrite your story", "you're worth it", "believe in yourself", "light at the end", "stronger than you know", "recovery is possible", "take it one step", "new chapter", "healing journey", "self-love", "your story isn't over", "show up for myself", "choose smarter", "staying consistent", "morning gratitude"
 
-If it sounds like it belongs on a Hallmark card or a therapist's office poster, REWRITE IT.
+If the slide text could apply to ANY addiction or even just general wellness, REWRITE IT to be specific to ${nicheName}.
 
-VOICE: Write like someone who's been through it and is texting their best friend at midnight. Not performing recovery — just being honest about it.
+VOICE: Write like someone who's been through THIS SPECIFIC addiction and is sharing what they learned. Not a therapist, not a brand — a real person.
 
 ${sceneInstr ? `IMAGE SCENE RULES: ${sceneInstr}` : ''}
 

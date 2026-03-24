@@ -21,30 +21,53 @@ export async function POST(req: NextRequest) {
 
     const nicheContext = NICHE_CONTEXT[niche] || `Addiction recovery content about: ${niche}`;
 
-    const prompt = `You generate carousel concepts for addiction recovery content that goes viral on Instagram and TikTok. You study what actually gets millions of views — not what SHOULD work in theory.
+    const NICHE_NAMES: Record<string, string> = {
+      'general-sobriety': 'sobriety',
+      'alcohol': 'alcohol/drinking',
+      'gambling': 'gambling/betting',
+      'meth': 'meth',
+      'heroin': 'heroin/opioids',
+      'mdma': 'MDMA/party drugs',
+      'cannabis': 'weed/cannabis',
+      'cocaine': 'cocaine',
+      'fentanyl': 'fentanyl/opioids',
+    };
+    const nicheName = NICHE_NAMES[niche] || niche;
 
-NICHE: ${nicheContext}
+    const prompt = `You generate carousel concepts for ${nicheName} recovery content on Instagram and TikTok.
+
+ADDICTION TYPE: ${nicheName}
+NICHE CONTEXT: ${nicheContext}
 
 Generate exactly 5 carousel story ideas. Each carousel has 5 slides.
 
-WHAT MAKES A BANGER CAROUSEL (from studying 300+ viral recovery posts):
-1. SLIDE 1 HOOK must use one of these proven formats:
-   - "Nobody told me that [specific unexpected truth]"
-   - "The worst part about [X] isn't [obvious]. It's [gut-punch]"
-   - "$[specific number] in [timeframe]" (money/time/people lost)
-   - "I told everyone [the lie]" (functional addict reveal)
-   - Direct address that calls out a specific behavior ("You check your [X] before your feet hit the floor")
-   
-2. NICHE SPECIFICITY — Every slide must contain details ONLY someone in this specific niche would recognize. A gambling carousel slide should mention parlays, the DraftKings notification sound, the casino carpet pattern. An alcohol slide should mention the recycling bin, mouthwash before work, the "just wine" excuse.
+CRITICAL RULE: Every single carousel must be UNMISTAKABLY about ${nicheName}. If you could swap the addiction name and the content still works, it's too generic. REWRITE IT.
 
-3. EMOTIONAL ARC — Not just sad→hopeful. The best arcs are: shame→recognition→raw honesty→unexpected hope OR humor→relatability→gut-punch→redemption
+HOOK SLIDE (SLIDE 1) FORMAT — must explicitly name the addiction:
+- "5 things that changed when I stopped [drinking/smoking weed/gambling/etc]"
+- "[Substance] is one of those things that when you remove it from your life, it also removes a lot of problems"
+- "How I finally stopped [drinking/smoking/betting/etc]"
+- "5 lessons I learned after I quit [substance/behavior]"
+- "What happened when I [deleted the betting apps/put down the bottle/stopped smoking/etc]"
+- The hook MUST name the specific substance or behavior. Not "addiction" — the actual thing.
 
-4. THE TEXT MUST CARRY THE CAROUSEL — The images support the text, not the other way around. If the text alone doesn't make someone stop scrolling, the image won't save it.
+SLIDES 2-4 — NICHE-SPECIFIC CONTENT:
+- Each slide must contain details that ONLY apply to ${nicheName}
+- For alcohol: hangovers, wine culture, bars, blackouts, morning-after texts, hiding bottles, the "just one glass" lie, beer belly, liver, Sunday scaries
+- For cannabis: brain fog lifting, dreams coming back, actually tasting food, motivation returning, spending $400/month on weed, wake-and-bake routine, the "it's not addictive" lie, remembering conversations
+- For gambling: betting apps, checking odds during dinner, the "I'll win it back" spiral, DraftKings/FanDuel, parlays, the casino, maxed credit cards, lying about losses, watching sports without betting
+- For cocaine: $500 weekends, the 4am group chat, bathroom stalls, nosebleeds, the Sunday comedown, "just on weekends" lie, the drip
+- For meth: staying up for days, the crash, before/after face, shadow people, paranoia, teeth, weight
+- For heroin: the warm blanket feeling vs withdrawal, long sleeves in July, nodding off, Narcan, pill to needle pipeline
+- For MDMA: Tuesday depression, chasing the first roll, jaw clenching, music feeling flat sober, serotonin debt
+- For fentanyl: pill presses, Narcan, friends dying, the supply fear, "I thought it was Percocet"
+- Slides can be numbered tips/lessons or confessional statements — either format works
+- Text should sound like a real person sharing their experience, not a therapist
 
-5. SLIDE 5 TEXT must always be: "Quit today with the Sunflower Sober app 🌻"
+SLIDE 5: Text MUST be exactly: "Quit today with the Sunflower Sober app 🌻"
 
-ABSOLUTE BANNED PHRASES (instant reject):
-"one day at a time", "recovery is a journey", "you are not alone", "it gets better", "rock bottom" (as motivation), "breaking free", "chose life", "found the light", "finally showing up", "rewrite your story", "you're worth it", "believe in yourself", "light at the end", "stronger than you know", "recovery is possible", "new chapter", "healing journey", "self-love", "your story isn't over"
+ABSOLUTE BANNED PHRASES:
+"one day at a time", "recovery is a journey", "you are not alone", "it gets better", "rock bottom", "breaking free", "chose life", "found the light", "finally showing up", "rewrite your story", "you're worth it", "believe in yourself", "light at the end", "stronger than you know", "recovery is possible", "new chapter", "healing journey", "self-love", "your story isn't over", "show up for myself", "choose smarter", "morning gratitude", "staying consistent"
 
 Return ONLY valid JSON (no markdown, no code fences):
 {
