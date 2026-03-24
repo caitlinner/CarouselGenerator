@@ -202,7 +202,7 @@ Return ONLY valid JSON:
         try {
           story = JSON.parse(cleaned);
         } catch {
-          send({ error: 'Failed to parse story' });
+          send({ error: 'Failed to parse story. Raw (first 300 chars): ' + storyText.slice(0, 300) });
           controller.close();
           return;
         }
