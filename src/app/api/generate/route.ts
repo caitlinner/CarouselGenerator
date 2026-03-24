@@ -193,7 +193,9 @@ Return ONLY valid JSON:
         }
 
         const storyData = await storyRes.json();
-        const storyText = storyData.candidates?.[0]?.content?.parts?.[0]?.text || '';
+        // Gemini thinking models return thought parts first, then text parts — grab the last text part
+        const storyParts = storyData.candidates?.[0]?.content?.parts || [];
+        const storyText = storyParts.filter((p: Record<string, unknown>) => typeof p.text === 'string' && !p.thought).pop()?.text || '';
         const cleaned = storyText.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
 
         let story: { title: string; slides: Array<{ text: string; scene: string }> };
