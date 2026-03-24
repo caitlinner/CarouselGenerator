@@ -1,5 +1,7 @@
 import { NextRequest } from 'next/server';
 
+export const maxDuration = 300; // Allow up to 5 minutes for image generation
+
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 const BASE_URL = 'https://generativelanguage.googleapis.com/v1beta';
 
@@ -173,7 +175,7 @@ Return ONLY valid JSON:
 {"title":"carousel title","slides":[{"text":"overlay text","scene":"detailed image scene description"}]}`;
 
         const storyRes = await fetch(
-          `${BASE_URL}/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`,
+          `${BASE_URL}/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`,
           {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
