@@ -181,7 +181,7 @@ Return ONLY valid JSON:
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               contents: [{ parts: [{ text: storyPrompt }] }],
-              generationConfig: { temperature: 0.95, maxOutputTokens: 2048 },
+              generationConfig: { temperature: 0.95, maxOutputTokens: 8192 },
             }),
           }
         );
