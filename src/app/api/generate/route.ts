@@ -175,7 +175,7 @@ Return ONLY valid JSON:
 {"title":"carousel title","slides":[{"text":"overlay text","scene":"detailed image scene description"}]}`;
 
         const storyRes = await fetch(
-          `${BASE_URL}/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`,
+          `${BASE_URL}/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`,
           {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
