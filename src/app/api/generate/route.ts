@@ -4,15 +4,23 @@ const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 const BASE_URL = 'https://generativelanguage.googleapis.com/v1beta';
 
 const NICHE_CONTEXT: Record<string, string> = {
-  'general-sobriety': 'general sobriety and recovery — healing journeys, sober milestones, rebuilding life',
-  'alcohol': 'alcohol addiction — wine mom culture lies, hangover mornings vs sober mornings, the "just one drink" trap',
-  'gambling': 'gambling addiction — chasing losses, sports betting destroying lives, financial ruin',
-  'meth': 'meth addiction — destruction, psychosis, before/after transformation, rebuilding',
-  'heroin': 'heroin/opioid addiction — rock bottom, Narcan saves, losing friends to overdose',
-  'mdma': 'MDMA/party drug addiction — serotonin depletion, rave culture exit, fake vs real happiness',
-  'cannabis': 'cannabis dependency — brain fog lifting, motivation returning, "it\'s just weed" gaslighting',
-  'cocaine': 'cocaine addiction — fake confidence, bathroom stall confessions, 4am existential dread',
-  'fentanyl': 'fentanyl crisis — friends dying from one pill, carrying Narcan, losing a generation',
+  'general-sobriety': 'General sobriety/recovery. VIRAL ANGLES: the "is this the same person?" before/after disbelief, day counter milestones that make people do math ("wait, 847 days means they quit during COVID"), the specific embarrassing moment that was your last straw, the friend who stopped calling. EMOTIONAL HOOKS: shame spiral specifics, the 3am phone check, waking up and checking your bank account, the apology you never sent.',
+
+  'alcohol': 'Alcohol addiction. VIRAL ANGLES: "mommy wine culture" is manufactured by Big Alcohol targeting women 30-45, the "just one glass" that becomes a bottle by Thursday, the Instagram wine-o-clock memes that normalize dependency, hiding bottles in the recycling before your partner gets home. EMOTIONAL HOOKS: the morning mouth taste, checking your texts with dread, calling in sick on Monday again, your kid seeing you stumble, the exact moment you realized you were drinking alone every night. WHAT HITS: Pop culture references + wine culture critique = proven formula.',
+
+  'gambling': 'Gambling addiction. VIRAL ANGLES: sports betting apps designed like slot machines in your pocket, the "I\'ll win it back" lie you tell yourself at 4am, checking your phone during dinner for live odds, the parlay that was "guaranteed", borrowing money from people who trust you. EMOTIONAL HOOKS: the exact dollar amount you\'ve lost (specificity kills), the notification sound that Pavlov-trained you, refreshing the banking app knowing what you\'ll see, the spreadsheet of losses you\'ll never show anyone.',
+
+  'meth': 'Meth addiction. VIRAL ANGLES: the before/after face that makes people screenshot and share, 72-hour binges where you clean the entire house then don\'t sleep for a week, shadow people, picking at skin in the mirror for hours, the paranoia that everyone knows. EMOTIONAL HOOKS: the first time your mom didn\'t recognize you, teeth crumbling, the weight you lost that people "complimented" not knowing why, the sound of a lighter that still triggers something.',
+
+  'heroin': 'Heroin/opioid addiction. VIRAL ANGLES: started with a prescription after surgery and ended up on the street, the warm blanket feeling vs the cold reality of withdrawal, Narcan saves — the 4 minutes between death and life, long sleeves in July. EMOTIONAL HOOKS: the first time you stole from family, nodding off mid-conversation with your kid, the friend who OD\'d on what you both bought together, the hospital bracelet collection, waking up in the ER and the nurse\'s face.',
+
+  'mdma': 'MDMA/party drug addiction. VIRAL ANGLES: "it\'s not addictive" is the lie that gets you, the Tuesday depression that becomes every day depression, chasing the first roll forever, your serotonin is a credit card and you maxed it out. EMOTIONAL HOOKS: the moment music stopped making you feel anything sober, taking more and feeling less, your jaw hurting on Monday, friends who only text you about the next rave, realizing the "love" you felt was chemistry not connection.',
+
+  'cannabis': 'Cannabis dependency. VIRAL ANGLES: "it\'s just weed" is the most effective gaslighting in addiction — try telling someone you\'re addicted and watch them laugh, waking and baking so long you forgot what mornings feel like sober, spending $400/month on something you said you could quit anytime. EMOTIONAL HOOKS: the first time you dreamed again after quitting, eating food that actually tastes like food, realizing you haven\'t been genuinely bored in years because you smoked every feeling away, the motivation that comes flooding back like someone unclogged a drain.',
+
+  'cocaine': 'Cocaine addiction. VIRAL ANGLES: the "successful" addict — nobody suspects because you still show up to work, $500 weekends that become $500 Tuesdays, bathroom stall confessions where you bond with strangers you\'ll never see again, the 4am group chat that only activates on weekends. EMOTIONAL HOOKS: the drip taste you can\'t forget, the nosebleed at brunch, checking your bank account on Sunday morning, the friends who were really just people who shared a bag, the moment you realized "social use" was a lie you told to everyone including yourself.',
+
+  'fentanyl': 'Fentanyl crisis. VIRAL ANGLES: a pill that looks like Percocet killed your friend — they thought they knew what they were taking, carrying Narcan because you don\'t trust the supply anymore, rainbow fentanyl that looks like candy, losing 3 friends in one year to the same thing. EMOTIONAL HOOKS: the text that starts with "did you hear about...", the phone call from a number you recognize at 2am, the memorial tattoo that keeps getting additions, the empty chair at Thanksgiving that nobody mentions but everyone sees.',
 };
 
 const STYLE_PROMPTS: Record<string, string> = {
@@ -40,14 +48,56 @@ export async function POST(req: NextRequest) {
 
         // Randomize story structure to prevent repetitive outputs
         const STORY_ANGLES = [
-          { name: 'confession', arc: 'Confession → Shame spiral → Rock bottom moment → The ugly first week → CTA', hook: 'Start with a specific shameful confession nobody admits out loud' },
-          { name: 'letter-to-past', arc: 'Letter to past self → What you didn\'t know → The moment you wish you could undo → What you\'d say now → CTA', hook: 'Write the opening line of a letter to your past self' },
-          { name: 'last-time', arc: 'The last time I used → What happened next → The hospital/police/wake-up → 6 months later → CTA', hook: 'Describe a hyper-specific "last time" scene with sensory detail' },
-          { name: 'things-nobody-tells', arc: '5 things nobody tells you → Truth #1 (body) → Truth #2 (relationships) → Truth #3 (identity) → CTA', hook: 'Open with "Nobody warned me about..." and name something unexpected' },
-          { name: 'timeline', arc: 'Day 1 → Day 30 → Day 90 → Day 365 → CTA', hook: 'Start with a visceral Day 1 scene — shaking hands, cold sweat, clock watching' },
-          { name: 'comparison', arc: 'Saturday night then → Sunday morning then → Saturday night now → Sunday morning now → CTA', hook: 'Paint a vivid "then" scene with specific ugly details' },
-          { name: 'relationship', arc: 'What they saw → What I hid → The conversation that broke me → Earning trust back → CTA', hook: 'Start with what someone you love said to you at your worst' },
-          { name: 'money', arc: 'Monthly cost of addiction → What I lost → The final receipt → What I spend it on now → CTA', hook: 'Open with a specific dollar amount or financial gut punch' },
+          {
+            name: 'nobody-told-me',
+            arc: 'The thing nobody warned me about → The ugly reality → The moment it hit me → What I know now → CTA',
+            hook: 'Start with "Nobody told me that..." followed by a hyper-specific, unexpected truth about this addiction. NOT a generic observation — something that makes someone in recovery go "holy shit, yes."'
+          },
+          {
+            name: 'the-last-time',
+            arc: 'The last time I [used] → What happened in the next hour → The face of the person who found me → The version of me that exists now → CTA',
+            hook: 'Paint a cinematic first slide — a single sensory detail from the last time. The taste, the sound, the text message, the exact location. Make the reader SEE it.'
+          },
+          {
+            name: 'the-math',
+            arc: 'The dollar amount → What that could have been → The real cost (not money) → What I invest in now → CTA',
+            hook: 'Open with a SPECIFIC dollar amount or number that makes people gasp. "$47,000 in 3 years." "1,460 mornings." "23 friends\' funerals." Numbers stop scrollers.'
+          },
+          {
+            name: 'the-text-message',
+            arc: 'The text I sent at [time] → What I meant vs what I said → What they replied (or didn\'t) → The conversation I had sober → CTA',
+            hook: 'Start with a text-message-style confession — the kind of thing someone types at 2am and deletes in the morning. Raw, unfiltered, embarrassing.'
+          },
+          {
+            name: 'before-after-internal',
+            arc: 'What [day/time] looked like using → The ritual/routine of it → What [same day/time] looks like now → The small thing that made me cry with gratitude → CTA',
+            hook: 'Describe a hyper-specific time of day or weekly ritual — "Every Sunday at 11am" or "The first 4 minutes after waking up." Make people recognize their own patterns.'
+          },
+          {
+            name: 'the-lie-i-told',
+            arc: 'The lie I told everyone → The lie I told myself → The truth I couldn\'t say out loud → Saying it now → CTA',
+            hook: 'Start with the exact lie. Not "I lied about my drinking" — the SPECIFIC lie. "I\'m just tired." "I only had two." "I can stop whenever I want." One sentence that millions have said.'
+          },
+          {
+            name: 'they-dont-know',
+            arc: 'What my coworkers/friends/family see → What they don\'t see → The moment I almost got caught → Why I stopped hiding → CTA',
+            hook: 'Contrast the public persona vs private reality. "My boss thinks I\'m the most reliable person on the team" energy. The functional addict reveal.'
+          },
+          {
+            name: 'the-worst-part',
+            arc: 'The worst part isn\'t what you think → It\'s not the [obvious thing] → It\'s the [unexpected gut-punch] → But here\'s what nobody tells you about after → CTA',
+            hook: 'Subvert expectations immediately. "The worst part of [addiction] isn\'t [the obvious]. It\'s [the thing that actually haunts you]." Make people curious about what the real worst part is.'
+          },
+          {
+            name: 'letter-to-self',
+            arc: 'Hey, it\'s future you → I know what you\'re doing right now → Here\'s what\'s about to happen → But you survive. And here\'s proof. → CTA',
+            hook: 'Write directly to the past self in second person. Intimate. Knowing. Like a time traveler who can see everything but can\'t stop it — only offer hope from the other side.'
+          },
+          {
+            name: 'the-object',
+            arc: 'This [object] used to mean [addiction thing] → Now it means [recovery thing] → The day the meaning changed → What it\'ll mean tomorrow → CTA',
+            hook: 'Focus on a single physical object — a lighter, a bottle opener, a phone notification sound, a bathroom mirror. Objects carry emotional weight. Make it symbolic.'
+          },
         ];
 
         const angle = STORY_ANGLES[Math.floor(Math.random() * STORY_ANGLES.length)];
@@ -62,23 +112,38 @@ export async function POST(req: NextRequest) {
 
         const sceneInstr = SCENE_INSTRUCTIONS[styleId] || '';
 
-        const storyPrompt = `You write recovery content that sounds like it came from a real person's Instagram story at 2am — not a brand, not a therapist, not AI. Raw. Unpolished. Real.
+        const storyPrompt = `You write text memes for addiction recovery carousels. Your text goes viral because it sounds like someone's private journal entry that accidentally got posted — not a brand, not a therapist, not a motivational poster.
 
 NICHE: ${nicheCtx}
 
-YOUR STORY ANGLE (use this exact structure): ${angle.name.toUpperCase()}
+YOUR STORY ANGLE: ${angle.name.toUpperCase()}
 Arc: ${angle.arc}
 Hook approach: ${angle.hook}
 
 Randomization seed (use this to vary your creative choices): ${randomSeed}
 
-RULES:
-- Max 12 words per slide text. Fragments > full sentences. How people actually text, not how they write essays.
-- NO clichés: banned phrases include "one day at a time", "recovery is a journey", "you are not alone", "it gets better", "rock bottom", "breaking free", "chose life", "found the light". If you've seen it on a motivational poster, don't use it.
-- Be NICHE-SPECIFIC. A gambling slide should mention specific gambling details (parlay bets, the slots sound, the app notification). An alcohol slide should mention specific drinking details (the wine bottle hidden in the closet, the mouthwash before work). Generic recovery talk = failure.
-- Slide 5 text MUST be exactly: "Quit today with the Sunflower Sober app 🌻"
-- Write like a human who's lived it. Typo-free but conversational.
-- Each generation should feel completely different from any other. Vary the specific details, emotions, scenes, and word choices.
+SLIDE 1 RULES (THE HOOK — THIS IS EVERYTHING):
+- Must be impossible to scroll past. The reader should feel CALLED OUT or IMPOSSIBLY CURIOUS.
+- Proven hook formats that work: "Nobody told me that...", "The worst part about [X] isn't...", "$[specific amount] in [timeframe]", "I told everyone I was [lie]", "What [day] looks like at [specific time]"
+- The hook must be SPECIFIC to the niche. A gambling hook should not work for alcohol. An alcohol hook should not work for meth.
+- Max 10 words. Fragments hit harder than sentences.
+
+SLIDE 2-4 RULES (THE GUT PUNCH):
+- Max 10 words per slide. Fragments > sentences. How people text, not write.
+- Each slide must escalate emotional intensity OR reveal something unexpected
+- Be NICHE-SPECIFIC with details only someone who lived it would know (see niche context above)
+- NO transitions like "but then" or "and then" — each slide should hit like its own statement
+
+SLIDE 5 (CTA):
+- Text MUST be exactly: "Quit today with the Sunflower Sober app 🌻"
+- No variations. This exact text.
+
+ABSOLUTE BANNED PHRASES (instant reject if any appear):
+"one day at a time", "recovery is a journey", "you are not alone", "it gets better", "rock bottom" (as motivation), "breaking free", "chose life", "found the light", "finally showing up", "rewrite your story", "you're worth it", "believe in yourself", "light at the end", "stronger than you know", "recovery is possible", "take it one step", "new chapter", "healing journey", "self-love", "your story isn't over"
+
+If it sounds like it belongs on a Hallmark card or a therapist's office poster, REWRITE IT.
+
+VOICE: Write like someone who's been through it and is texting their best friend at midnight. Not performing recovery — just being honest about it.
 
 ${sceneInstr ? `IMAGE SCENE RULES: ${sceneInstr}` : ''}
 
