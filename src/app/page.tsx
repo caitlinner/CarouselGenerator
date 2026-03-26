@@ -22,7 +22,7 @@ export default function Home() {
           🌻 Sunflower Carousel Generator
         </h1>
         <p className="text-lg text-gray-500 max-w-xl mx-auto">
-          Pick a niche → choose a design style → preview backgrounds → add text → get 7 carousel slides. Ready to post.
+          Pick a niche → choose a text style → pick a design → generate 7 carousel slides. Ready to post.
         </p>
       </div>
 
@@ -34,17 +34,17 @@ export default function Home() {
         <div className="w-8 h-px bg-gray-300" />
         <div className="flex items-center gap-2 px-4 py-2 rounded-full text-gray-400 bg-gray-100">
           <span className="w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center text-xs font-bold">2</span>
-          Design Style
-        </div>
-        <div className="w-8 h-px bg-gray-300" />
-        <div className="flex items-center gap-2 px-4 py-2 rounded-full text-gray-400 bg-gray-100">
-          <span className="w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center text-xs font-bold">3</span>
           Text Style
         </div>
         <div className="w-8 h-px bg-gray-300" />
         <div className="flex items-center gap-2 px-4 py-2 rounded-full text-gray-400 bg-gray-100">
+          <span className="w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center text-xs font-bold">3</span>
+          Design Style
+        </div>
+        <div className="w-8 h-px bg-gray-300" />
+        <div className="flex items-center gap-2 px-4 py-2 rounded-full text-gray-400 bg-gray-100">
           <span className="w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center text-xs font-bold">4</span>
-          Finish
+          Generate
         </div>
       </div>
 

@@ -133,7 +133,7 @@ function CreateContent() {
   const router = useRouter();
   const niche = searchParams.get('niche') || 'general-sobriety';
 
-  const [step, setStep] = useState<Step>('style');
+  const [step, setStep] = useState<Step>('textStyle');
   const [selectedStyle, setSelectedStyle] = useState<string | null>(null);
   const [selectedTextStyle, setSelectedTextStyle] = useState<string | null>(null);
   const [finalImages, setFinalImages] = useState<string[]>([]);
@@ -143,17 +143,19 @@ function CreateContent() {
   const [genStatus, setGenStatus] = useState('');
   const [error, setError] = useState('');
 
-  const stepNum = step === 'style' ? 2 : step === 'textStyle' ? 3 : 4;
+  const stepNum = step === 'textStyle' ? 2 : step === 'style' ? 3 : 4;
 
   const STEPS = [
     { num: 1, label: 'Niche' },
-    { num: 2, label: 'Design Style' },
-    { num: 3, label: 'Text Style' },
-    { num: 4, label: 'Finish' },
+    { num: 2, label: 'Text Style' },
+    { num: 3, label: 'Design Style' },
+    { num: 4, label: 'Generate' },
   ];
 
   // Full pipeline: text → images (influenced by text) → composite
-  async function generateFullCarousel(textStyle: string) {
+  async function generateFullCarousel(textStyle: string, styleId?: string) {
+    const finalStyleId = styleId || selectedStyle;
+    if (styleId) setSelectedStyle(styleId);
     setSelectedTextStyle(textStyle);
     setStep('generating');
     setGenProgress(0);
@@ -161,11 +163,10 @@ function CreateContent() {
     setError('');
 
     try {
-      // The API generates text first, then images influenced by text, then returns both
       const res = await fetch('/api/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ niche, styleId: selectedStyle, textStyle }),
+        body: JSON.stringify({ niche, styleId: finalStyleId, textStyle }),
       });
       if (!res.ok) throw new Error(await res.text());
 
@@ -238,27 +239,25 @@ function CreateContent() {
     </div>
   );
 
-  // ── Step 1: Design style ──
-  if (step === 'style') {
+  // ── Step 1: Text style ──
+  if (step === 'textStyle') {
     return (
       <div className="max-w-4xl mx-auto px-6 py-10">
         <button onClick={() => router.push('/')} className="text-sm text-gray-500 hover:text-purple-600 mb-6 inline-flex items-center gap-1">← Back to niches</button>
         <StepBar />
         <div className="mb-2">
           <h1 className="text-2xl font-bold" style={{ color: '#4A1A8A' }}>{NICHE_LABELS[niche] || niche}</h1>
-          <p className="text-gray-500 mt-1">Choose a design style for your carousel backgrounds</p>
+          <p className="text-gray-500 mt-1">Choose a text style for your carousel</p>
         </div>
         {error && <div className="mb-6 p-4 rounded-xl bg-red-50 text-red-600 text-sm">{error}</div>}
-        <div className="grid grid-cols-1 gap-5 mt-8">
-          {IMAGE_STYLES.map(s => (
-            <button key={s.id} onClick={() => { setSelectedStyle(s.id); setStep('textStyle'); }}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mt-8">
+          {TEXT_STYLES.map(s => (
+            <button key={s.id} onClick={() => { setSelectedTextStyle(s.id); setStep('style'); }}
               className="w-full text-left bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-lg hover:border-purple-200 transition-all overflow-hidden group">
-              <div className="flex items-stretch">
-                <div className="w-32 shrink-0 flex items-center justify-center text-5xl" style={{ background: s.preview }}>{s.emoji}</div>
-                <div className="p-6 flex-1">
-                  <div className="font-bold text-lg text-gray-900 group-hover:text-purple-700 transition-colors mb-1">{s.label}</div>
-                  <div className="text-sm text-gray-500">{s.desc}</div>
-                </div>
+              <div className="flex flex-col items-center p-8 text-center">
+                <div className="w-20 h-20 rounded-2xl flex items-center justify-center text-4xl mb-4" style={{ background: s.preview }}>{s.emoji}</div>
+                <div className="font-bold text-lg text-gray-900 group-hover:text-purple-700 transition-colors mb-2">{s.label}</div>
+                <div className="text-sm text-gray-500">{s.desc}</div>
               </div>
             </button>
           ))}
@@ -267,28 +266,30 @@ function CreateContent() {
     );
   }
 
-  // ── Step 2: Text style ──
-  if (step === 'textStyle') {
-    const styleObj = IMAGE_STYLES.find(s => s.id === selectedStyle);
+  // ── Step 2: Design style ──
+  if (step === 'style') {
+    const textStyleObj = TEXT_STYLES.find(t => t.id === selectedTextStyle);
     return (
       <div className="max-w-4xl mx-auto px-6 py-10">
-        <button onClick={() => setStep('style')} className="text-sm text-gray-500 hover:text-purple-600 mb-6 inline-flex items-center gap-1">← Back to design style</button>
+        <button onClick={() => setStep('textStyle')} className="text-sm text-gray-500 hover:text-purple-600 mb-6 inline-flex items-center gap-1">← Back to text style</button>
         <StepBar />
         <div className="mb-2">
           <h1 className="text-2xl font-bold" style={{ color: '#4A1A8A' }}>{NICHE_LABELS[niche] || niche}</h1>
-          <p className="text-gray-500 mt-1">{styleObj?.emoji} {styleObj?.label} — Now choose a text style</p>
+          <p className="text-gray-500 mt-1">{textStyleObj?.emoji} {textStyleObj?.label} — Now choose a design style</p>
         </div>
         {error && <div className="mb-6 p-4 rounded-xl bg-red-50 text-red-600 text-sm">{error}</div>}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mt-8">
-          {TEXT_STYLES.map(s => (
-            <button key={s.id} onClick={() => generateFullCarousel(s.id)}
+        <div className="grid grid-cols-1 gap-5 mt-8">
+          {IMAGE_STYLES.map(s => (
+            <button key={s.id} onClick={() => generateFullCarousel(selectedTextStyle!, s.id)}
               className="w-full text-left bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-lg hover:border-purple-200 transition-all overflow-hidden group">
-              <div className="flex flex-col items-center p-8 text-center">
-                <div className="w-20 h-20 rounded-2xl flex items-center justify-center text-4xl mb-4" style={{ background: s.preview }}>{s.emoji}</div>
-                <div className="font-bold text-lg text-gray-900 group-hover:text-purple-700 transition-colors mb-2">{s.label}</div>
-                <div className="text-sm text-gray-500 mb-3">{s.desc}</div>
-                <div className="inline-flex items-center gap-2 text-xs font-medium px-3 py-1.5 rounded-full" style={{ background: '#F5C518', color: '#1a1a2e' }}>
-                  🚀 Generate carousel
+              <div className="flex items-stretch">
+                <div className="w-32 shrink-0 flex items-center justify-center text-5xl" style={{ background: s.preview }}>{s.emoji}</div>
+                <div className="p-6 flex-1">
+                  <div className="font-bold text-lg text-gray-900 group-hover:text-purple-700 transition-colors mb-1">{s.label}</div>
+                  <div className="text-sm text-gray-500 mb-3">{s.desc}</div>
+                  <div className="inline-flex items-center gap-2 text-xs font-medium px-3 py-1.5 rounded-full" style={{ background: '#F5C518', color: '#1a1a2e' }}>
+                    🚀 Generate carousel
+                  </div>
                 </div>
               </div>
             </button>
@@ -343,9 +344,9 @@ function CreateContent() {
           <p className="text-gray-500 text-sm mt-1">7 slides — {styleObj?.label} — {textStyleObj?.label} — {NICHE_LABELS[niche]}</p>
         </div>
         <div className="flex gap-3">
-          <button onClick={() => { setStep('textStyle'); setFinalImages([]); setSlideTexts([]); setStoryTitle(''); setSelectedTextStyle(null); }}
+          <button onClick={() => { setStep('style'); setFinalImages([]); setSlideTexts([]); setStoryTitle(''); }}
             className="px-4 py-2 rounded-lg text-sm font-medium border border-gray-200 hover:bg-gray-50">🔄 Regenerate</button>
-          <button onClick={() => { setStep('style'); setFinalImages([]); setSlideTexts([]); setStoryTitle(''); setSelectedStyle(null); setSelectedTextStyle(null); }}
+          <button onClick={() => { setStep('textStyle'); setFinalImages([]); setSlideTexts([]); setStoryTitle(''); setSelectedStyle(null); setSelectedTextStyle(null); }}
             className="px-4 py-2 rounded-lg text-sm font-medium border border-gray-200 hover:bg-gray-50">← New carousel</button>
           <button onClick={() => { finalImages.forEach((img, i) => { const a = document.createElement('a'); a.href = img; a.download = `sunflower-carousel-${i + 1}.png`; a.click(); }); }}
             className="px-6 py-2 rounded-lg text-sm font-medium" style={{ background: '#F5C518', color: '#1a1a2e' }}>⬇️ Download All</button>
