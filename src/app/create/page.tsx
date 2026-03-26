@@ -26,6 +26,7 @@ const IMAGE_STYLES = [
   { id: 'majestic-mountains', emoji: '🏔️', label: 'Majestic Mountains', desc: 'Epic mountain landscapes with lush greenery', preview: 'linear-gradient(135deg, #2D5016 0%, #6B8E23 100%)' },
   { id: 'inspirational-sunsets', emoji: '🌅', label: 'Inspirational Sunsets', desc: 'Breathtaking sunset landscapes with dramatic skies', preview: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)' },
   { id: '3d-animated-bee', emoji: '🐝', label: '3D Animated Bee', desc: 'Adorable chubby 3D bee with glasses', preview: 'linear-gradient(135deg, #FFD700 0%, #FF8C00 100%)' },
+  { id: 'ocean', emoji: '🌊', label: 'Ocean', desc: 'Hyperrealistic ocean scenes — waves, depths, different colors and angles', preview: 'linear-gradient(135deg, #0077B6 0%, #00B4D8 50%, #90E0EF 100%)' },
 ];
 
 // Composite text onto background image — programmatic, zero typos
