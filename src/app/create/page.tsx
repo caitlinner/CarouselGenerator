@@ -30,7 +30,7 @@ const IMAGE_STYLES = [
 ];
 
 // Composite text onto background image — programmatic, zero typos
-async function compositeTextOnImage(bgDataUrl: string, text: string, slideIndex: number): Promise<string> {
+async function compositeTextOnImage(bgDataUrl: string, text: string, slideIndex: number, styleId?: string): Promise<string> {
   return new Promise((resolve) => {
     const img = new Image();
     img.onload = () => {
@@ -81,7 +81,7 @@ async function compositeTextOnImage(bgDataUrl: string, text: string, slideIndex:
       }
 
       const totalTextHeight = lines.length * (fontSize * 1.35);
-      const startY = img.height * 0.08;
+      const startY = styleId === 'ocean' ? (img.height - totalTextHeight) / 2 : img.height * 0.08;
 
       ctx.font = `bold ${fontSize}px "Helvetica Neue", Helvetica, Arial, sans-serif`;
       ctx.textAlign = 'center';
@@ -186,7 +186,7 @@ function CreateContent() {
                   const composited: string[] = [];
                   for (let i = 0; i < parsed.images.length; i++) {
                     if (parsed.images[i] && localSlideTexts[i]) {
-                      const result = await compositeTextOnImage(parsed.images[i], localSlideTexts[i], i);
+                      const result = await compositeTextOnImage(parsed.images[i], localSlideTexts[i], i, finalStyleId);
                       composited.push(result);
                     } else {
                       composited.push(parsed.images[i] || '');
