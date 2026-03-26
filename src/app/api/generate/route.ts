@@ -166,31 +166,38 @@ Return ONLY valid JSON:
 ADDICTION TYPE: ${nicheName}
 NICHE CONTEXT: ${nicheCtx}
 
-YOUR STORY ANGLE: ${angle.name.toUpperCase()}
-Arc: ${angle.arc}
-Hook approach: ${angle.hook}
-
 Randomization seed (use this to vary your creative choices): ${randomSeed}
 
 TEXT STYLE: EDUCATIONAL LISTICLE
 Generate exactly 7 slides.
 
-SLIDE 1 RULES (THE TITLE HOOK):
-- MUST explicitly name the addiction. This is a bold listicle title or hook statement.
-- Examples: "5 things that helped me stay sober", "5 Sobriety Quotes that Helped On my Hardest Days", "How I Finally Broke Free From the Weekend Drinking Cycle", "5 Advice to Quit Coke", "5 Rules to Protect My Sobriety", "5 Truths About Fentanyl"
-- The hook should be a relatable insight, a listicle promise, or a bold statement that NAMES THE SUBSTANCE/BEHAVIOR
-- Can be longer than 10 words — clarity and relatability matter more than brevity on the hook
+SLIDE 1 (THE HOOK TITLE):
+- This is a bold, catchy listicle title that grabs attention and NAMES the addiction/substance.
+- It should feel like a real person sharing their experience or hard-won knowledge.
+- Examples of the EXACT vibe and format:
+  • "5 Things That Helped Me Stay Sober"
+  • "How I Finally Broke Free From the Weekend Drinking Cycle"
+  • "5 Advice to Quit Coke"
+  • "5 Rules to Protect My Sobriety"
+  • "5 Truths About Fentanyl"
+  • "5 Sobriety Quotes That Helped On My Hardest Days"
+- MUST be specific to ${nicheName}. Name the substance/behavior directly.
+- Keep it interesting — make people want to swipe.
 
-SLIDES 2-6 RULES (NUMBERED EDUCATIONAL CONTENT):
-- 5 numbered educational tips, facts, or lessons about quitting ${nicheName}
-- Each slide MUST contain details SPECIFIC to this addiction type. If you swapped the addiction name, the slide should NOT make sense.
-- For alcohol: mention hangovers, wine, beer, bars, drinking alone, morning regret, the taste, the bottle, blackouts
-- For cannabis: mention smoking, the high, wake-and-bake, munchies, brain fog, dreams coming back, motivation returning
-- For gambling: mention betting apps, parlays, the casino, checking odds, the losses, the "win it back" feeling
-- For meth: mention staying up for days, the crash, the pipe, shadow people, weight loss, skin picking
-- Format each as a numbered item: "1. [Title]" followed by a brief explanation
-- Keep text conversational and relatable — like someone sharing their real experience
-- Each slide should be a complete thought that stands on its own
+SLIDES 2-6 (STEPS 1 THROUGH 5):
+- These are 5 numbered educational tips, lessons, or pieces of advice about quitting ${nicheName}.
+- Format: "1. [Short punchy title]" followed by 1-2 sentences of explanation. KEEP IT SUCCINCT.
+- Each tip MUST be specific to ${nicheName} — if you swapped the addiction name, the tip should NOT make sense.
+- Make it interesting and educational, not preachy. Like a friend sharing real advice.
+- Substance-specific details matter:
+  • Alcohol: hangovers, wine culture, bars, drinking alone, morning regret, blackouts, the bottle
+  • Cannabis: wake-and-bake, brain fog, dreams returning, motivation, munchies, the high
+  • Gambling: betting apps, parlays, the casino, chasing losses, checking odds
+  • Meth: staying up for days, the crash, weight loss, paranoia, skin picking
+  • Cocaine: weekend use becoming weekday, nosebleeds, the drip, bank account damage
+  • Heroin: withdrawal, nodding off, the warm blanket feeling, Narcan, prescriptions to street
+  • Fentanyl: fake pills, supply danger, Narcan, losing friends, awareness
+  • MDMA: Tuesday depression, serotonin depletion, chasing the first roll, jaw clenching
 
 SLIDE 7 (CTA):
 - Text MUST be exactly: "Quit with the Sunflower Sober app 🌻"
@@ -201,7 +208,7 @@ ABSOLUTE BANNED PHRASES (instant reject if any appear):
 
 If the slide text could apply to ANY addiction or even just general wellness, REWRITE IT to be specific to ${nicheName}.
 
-VOICE: Write like someone who's been through THIS SPECIFIC addiction and is sharing what they learned. Not a therapist, not a brand — a real person.
+VOICE: Write like someone who's been through THIS SPECIFIC addiction and is sharing what they learned. Not a therapist, not a brand — a real person. Succinct and punchy.
 
 ${sceneInstr ? `IMAGE SCENE RULES: ${sceneInstr}` : ''}
 

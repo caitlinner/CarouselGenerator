@@ -20,7 +20,7 @@ const TEXT_STYLES = [
     id: 'educational',
     emoji: '📚',
     label: 'Educational',
-    desc: 'Listicle-style content — a bold title hook on slide 1, then 5 numbered tips, facts, or lessons on slides 2-6',
+    desc: 'Bold hook title on slide 1, then 5 succinct numbered tips/advice on slides 2-6, CTA on slide 7',
     preview: 'linear-gradient(135deg, #4A1A8A 0%, #8B5DC8 100%)',
   },
   {
