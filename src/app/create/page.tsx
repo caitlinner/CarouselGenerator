@@ -202,8 +202,8 @@ function CreateContent() {
         }
       }
     } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : 'Failed to generate');
-      setStep('textStyle');
+      setError(e instanceof Error ? e.message : 'Failed to generate. Please try again.');
+      setStep('style');
     }
   }
 
