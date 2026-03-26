@@ -186,7 +186,7 @@ function CreateContent() {
                   const composited: string[] = [];
                   for (let i = 0; i < parsed.images.length; i++) {
                     if (parsed.images[i] && localSlideTexts[i]) {
-                      const result = await compositeTextOnImage(parsed.images[i], localSlideTexts[i], i, finalStyleId);
+                      const result = await compositeTextOnImage(parsed.images[i], localSlideTexts[i], i, finalStyleId || undefined);
                       composited.push(result);
                     } else {
                       composited.push(parsed.images[i] || '');
