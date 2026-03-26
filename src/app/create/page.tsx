@@ -81,7 +81,7 @@ async function compositeTextOnImage(bgDataUrl: string, text: string, slideIndex:
       }
 
       const totalTextHeight = lines.length * (fontSize * 1.35);
-      const startY = styleId === 'ocean' ? (img.height - totalTextHeight) / 2 : img.height * 0.08;
+      const startY = (img.height - totalTextHeight) / 2;
 
       ctx.font = `bold ${fontSize}px "Helvetica Neue", Helvetica, Arial, sans-serif`;
       ctx.textAlign = 'center';
