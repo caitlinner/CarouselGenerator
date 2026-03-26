@@ -16,8 +16,8 @@ const NICHE_LABELS: Record<string, string> = {
 };
 
 const TEXT_STYLES = [
-  { id: 'educational', emoji: '📚', label: 'Educational', desc: 'Bold hook title on slide 1, then 5 numbered tips on slides 2-6, CTA on slide 7', preview: 'linear-gradient(135deg, #4A1A8A 0%, #8B5DC8 100%)' },
-  { id: 'motivational', emoji: '💪', label: 'Motivational', desc: '6 powerful motivational quotes — raw, emotional, and shareable', preview: 'linear-gradient(135deg, #F5A623 0%, #FF6B6B 100%)' },
+  { id: 'educational', emoji: '📚', label: 'Educational', desc: 'Bold hook title on slide 1, then 5 numbered tips on slides 2-6, CTA on slide 9', preview: 'linear-gradient(135deg, #4A1A8A 0%, #8B5DC8 100%)' },
+  { id: 'motivational', emoji: '💪', label: 'Motivational', desc: '6 powerful motivational quotes — raw, emotional, and shareable. CTA on slide 9', preview: 'linear-gradient(135deg, #F5A623 0%, #FF6B6B 100%)' },
 ];
 
 const IMAGE_STYLES = [
