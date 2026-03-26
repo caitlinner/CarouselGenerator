@@ -147,22 +147,24 @@ Generate exactly 7 slides.
 SLIDES 1-6: Each slide is a powerful, raw motivational quote about quitting ${nicheName}. These must be SPECIFIC to this addiction — not generic inspiration. They should hit hard emotionally, feel like they came from someone who lived it, and be highly shareable. Each quote should be a standalone statement.
 
 SLIDE 7 (CTA):
-- Text MUST be exactly: "Quit with the Sunflower Sober app 🌻"
-- No variations. This exact text.
+- Text MUST be exactly: Quit with the Sunflower Sober app 🌻
+- No asterisks, no stars, no ** characters, no markdown formatting. Plain text only.
+
+CRITICAL: You MUST return exactly 7 slides in the JSON array. All 7 must be present.
 
 ABSOLUTE BANNED PHRASES (instant reject if any appear):
 "one day at a time", "recovery is a journey", "you are not alone", "it gets better", "rock bottom" (as motivation), "breaking free", "chose life", "found the light", "finally showing up", "rewrite your story", "you're worth it", "believe in yourself", "light at the end", "stronger than you know", "recovery is possible", "take it one step", "new chapter", "healing journey", "self-love", "your story isn't over", "show up for myself", "choose smarter", "staying consistent", "morning gratitude"
 
+BANNED CHARACTERS: Do NOT use asterisks (*), markdown bold (**), or any special formatting. Plain text only.
+
 VOICE: Write like someone who's been through THIS SPECIFIC addiction and is sharing what they learned. Not a therapist, not a brand — a real person.
 
-QUALITY CHECK: Triple-check ALL text for spelling errors, grammar mistakes, and typos. Every word must be correct. No misspellings, no broken sentences, no awkward phrasing.
-
-IMPORTANT: DO NOT prefix any slide text with "Slide 1", "Slide 2", numbers, or labels. Just the raw text content.
+QUALITY CHECK: Triple-check ALL text for spelling, grammar, and typos. This text gets rendered on images — errors will be visible.
 
 ${sceneInstr ? `IMAGE SCENE RULES: ${sceneInstr}` : ''}
 
-Return ONLY valid JSON:
-{"title":"carousel title","slides":[{"text":"overlay text","scene":"detailed image scene description"}]}`;
+Return ONLY valid JSON with exactly 7 slides:
+{"title":"carousel title","slides":[{"text":"overlay text","scene":"..."},{"text":"...","scene":"..."},{"text":"...","scene":"..."},{"text":"...","scene":"..."},{"text":"...","scene":"..."},{"text":"...","scene":"..."},{"text":"...","scene":"..."}]}`;
         } else {
           // Educational (default)
           storyPrompt = `You write carousel text for addiction recovery content on TikTok and Instagram. The content must be SPECIFIC to the addiction type — not generic recovery advice.
@@ -190,8 +192,9 @@ SLIDE 1 (THE HOOK TITLE):
 
 SLIDES 2-6 (NUMBERED TIPS 1 THROUGH 5):
 - 5 educational tips, lessons, or pieces of advice about quitting ${nicheName}.
-- Number them 1-5. Format: "1. [Title]" then 2 sentences of real explanation.
-- NEVER include the words "Slide 1", "Slide 2", "Slide 3" etc — just the numbered tip itself.
+- Number them 1-5. Format: "1. [Title]\n[One sentence of explanation]"
+- Keep it SHORT — the text gets rendered on an image, so less is more. One clear sentence of explanation after the numbered title.
+- NEVER include "Slide 1", "Slide 2" etc.
 - Each tip MUST be specific to ${nicheName} — if you swapped the addiction name, the tip should NOT make sense.
 - Make it interesting and educational, not preachy. Like a friend sharing real advice.
 - Substance-specific details matter:
@@ -205,22 +208,27 @@ SLIDES 2-6 (NUMBERED TIPS 1 THROUGH 5):
   • MDMA: Tuesday depression, serotonin depletion, chasing the first roll, jaw clenching
 
 SLIDE 7 (CTA):
-- Text MUST be exactly: "Quit with the Sunflower Sober app 🌻"
-- No variations. This exact text.
+- Text MUST be exactly: Quit with the Sunflower Sober app 🌻
+- No asterisks, no stars, no ** characters, no markdown formatting. Plain text only.
+- No variations from that exact text.
+
+CRITICAL: You MUST return exactly 7 slides in the JSON array. Slide 1 = hook title, Slides 2-6 = numbered tips, Slide 7 = CTA. All 7 must be in the "slides" array.
 
 ABSOLUTE BANNED PHRASES (instant reject if any appear):
 "one day at a time", "recovery is a journey", "you are not alone", "it gets better", "rock bottom" (as motivation), "breaking free", "chose life", "found the light", "finally showing up", "rewrite your story", "you're worth it", "believe in yourself", "light at the end", "stronger than you know", "recovery is possible", "take it one step", "new chapter", "healing journey", "self-love", "your story isn't over", "show up for myself", "choose smarter", "staying consistent", "morning gratitude"
 
+BANNED CHARACTERS: Do NOT use asterisks (*), markdown bold (**), or any special formatting in slide text. Plain text only.
+
 If the slide text could apply to ANY addiction or even just general wellness, REWRITE IT to be specific to ${nicheName}.
 
-VOICE: Write like someone who's been through THIS SPECIFIC addiction and is sharing what they learned. Not a therapist, not a brand — a real person. Conversational but with enough substance to actually help.
+VOICE: Write like someone who's been through THIS SPECIFIC addiction and is sharing what they learned. Not a therapist, not a brand — a real person.
 
-QUALITY CHECK: Triple-check ALL text for spelling errors, grammar mistakes, and typos. Every word must be correct. No misspellings, no broken sentences, no awkward phrasing.
+QUALITY CHECK: Triple-check ALL text for spelling errors, grammar mistakes, and typos. Every word must be correct. No misspellings, no broken sentences, no awkward phrasing. This text will be rendered directly onto images — errors will be visible.
 
 ${sceneInstr ? `IMAGE SCENE RULES: ${sceneInstr}` : ''}
 
-Return ONLY valid JSON:
-{"title":"carousel title","slides":[{"text":"overlay text","scene":"detailed image scene description"}]}`;
+Return ONLY valid JSON with exactly 7 slides:
+{"title":"carousel title","slides":[{"text":"overlay text","scene":"detailed image scene description"},{"text":"...","scene":"..."},{"text":"...","scene":"..."},{"text":"...","scene":"..."},{"text":"...","scene":"..."},{"text":"...","scene":"..."},{"text":"...","scene":"..."}]}`;
         }
 
         const storyRes = await fetch(
@@ -259,6 +267,13 @@ Return ONLY valid JSON:
           return;
         }
 
+        // Sanitize: strip asterisks/markdown from all slide text
+        story.slides = story.slides.map(s => ({
+          ...s,
+          text: s.text.replace(/\*+/g, '').trim(),
+        }));
+        story.title = story.title.replace(/\*+/g, '').trim();
+
         send({
           progress: 10,
           storyTitle: story.title,
@@ -272,13 +287,18 @@ Return ONLY valid JSON:
           const slide = story.slides[i];
           send({ progress: 10 + (i * 12) });
 
+          // Keep text short for image rendering — AI image models struggle with long text
+          const displayText = slide.text.length > 120 ? slide.text.slice(0, 117) + '...' : slide.text;
+
           const imagePrompt = `${stylePrompt}
 
 Scene: ${slide.scene}
 
-IMPORTANT: Display this text prominently on the image in large bold white letters with a strong black outline/stroke for readability: "${slide.text}"
+IMPORTANT: Display this text prominently on the image in large bold white letters with a strong black outline/stroke for readability. The text must be spelled PERFECTLY with zero errors:
 
-The text must be the focal point, large, centered, and clearly readable on mobile. White text with thick black outline. The background scene should support the emotional message. 3:4 portrait aspect ratio for Instagram/TikTok carousel.
+"${displayText}"
+
+The text must be the focal point, large, centered, and clearly readable on mobile. White text with thick black outline. The background scene should support the emotional message. 3:4 portrait aspect ratio for Instagram/TikTok carousel. SPELL EVERY WORD CORRECTLY.
 
 This is slide ${i + 1} of 7 in a carousel series. Visual consistency across all slides is critical.`;
 
