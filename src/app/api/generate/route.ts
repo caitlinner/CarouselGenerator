@@ -155,6 +155,10 @@ ABSOLUTE BANNED PHRASES (instant reject if any appear):
 
 VOICE: Write like someone who's been through THIS SPECIFIC addiction and is sharing what they learned. Not a therapist, not a brand — a real person.
 
+QUALITY CHECK: Triple-check ALL text for spelling errors, grammar mistakes, and typos. Every word must be correct. No misspellings, no broken sentences, no awkward phrasing.
+
+IMPORTANT: DO NOT prefix any slide text with "Slide 1", "Slide 2", numbers, or labels. Just the raw text content.
+
 ${sceneInstr ? `IMAGE SCENE RULES: ${sceneInstr}` : ''}
 
 Return ONLY valid JSON:
@@ -184,9 +188,10 @@ SLIDE 1 (THE HOOK TITLE):
 - MUST be specific to ${nicheName}. Name the substance/behavior directly.
 - Keep it interesting — make people want to swipe.
 
-SLIDES 2-6 (STEPS 1 THROUGH 5):
-- These are 5 numbered educational tips, lessons, or pieces of advice about quitting ${nicheName}.
-- Format: "1. [Short punchy title]" followed by 1-2 sentences of explanation. KEEP IT SUCCINCT.
+SLIDES 2-6 (TIPS 1 THROUGH 5):
+- 5 educational tips, lessons, or pieces of advice about quitting ${nicheName}.
+- DO NOT number them. DO NOT prefix with "1." "2." etc. DO NOT say "Slide 1" "Slide 2" etc. Just write the text directly.
+- Format: A short punchy title/headline, then 2-3 sentences of real talk explaining it. Give enough detail to be genuinely helpful — not just a one-liner.
 - Each tip MUST be specific to ${nicheName} — if you swapped the addiction name, the tip should NOT make sense.
 - Make it interesting and educational, not preachy. Like a friend sharing real advice.
 - Substance-specific details matter:
@@ -208,7 +213,9 @@ ABSOLUTE BANNED PHRASES (instant reject if any appear):
 
 If the slide text could apply to ANY addiction or even just general wellness, REWRITE IT to be specific to ${nicheName}.
 
-VOICE: Write like someone who's been through THIS SPECIFIC addiction and is sharing what they learned. Not a therapist, not a brand — a real person. Succinct and punchy.
+VOICE: Write like someone who's been through THIS SPECIFIC addiction and is sharing what they learned. Not a therapist, not a brand — a real person. Conversational but with enough substance to actually help.
+
+QUALITY CHECK: Triple-check ALL text for spelling errors, grammar mistakes, and typos. Every word must be correct. No misspellings, no broken sentences, no awkward phrasing.
 
 ${sceneInstr ? `IMAGE SCENE RULES: ${sceneInstr}` : ''}
 
