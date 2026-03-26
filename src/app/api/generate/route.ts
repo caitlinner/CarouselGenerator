@@ -170,36 +170,40 @@ NICHE CONTEXT: ${nicheCtx}
 Randomization seed (use this to vary your creative choices): ${randomSeed}
 CRITICAL UNIQUENESS RULE: You MUST generate completely fresh, never-before-seen content. Do NOT fall back on common addiction tropes or recycled ideas. Use the seed number above to push your creativity in unexpected directions. Think of a SPECIFIC, surprising angle that hasn't been done before. Avoid generic motivational content — be raw, specific, and original. If your first idea feels obvious, throw it away and dig deeper.
 
-TEXT STYLE: MOTIVATIONAL QUOTES
-CONTENT ANGLE: ${angle.name.toUpperCase()} — ${angle.hook}
-Generate exactly 7 slides.
+TEXT STYLE: STANDALONE MOTIVATIONAL QUOTES
+Generate exactly 7 slides. Each slide is ONE standalone inspirational quote about recovery, sobriety, or quitting ${nicheName}. NOT a storyline. NOT connected slides. Each quote stands completely on its own.
 
-SLIDE 1 (THE HOOK):
-- This is the attention-grabber. It MUST name ${nicheName} directly and hook the reader.
-- Examples of the vibe: "The hardest part of quitting ${nicheName} wasn't the withdrawal" / "Nobody warns you about the loneliness after you quit ${nicheName}" / "I didn't quit ${nicheName} because I was strong. I quit because I was tired."
-- Make it specific, emotional, and impossible to scroll past. Name the substance/behavior.
+SLIDE 1 (HOOK QUOTE):
+- The most powerful, scroll-stopping quote. MUST name ${nicheName} or reference it specifically.
+- Short, punchy, emotional. Think: "I didn't quit ${nicheName} because I was strong. I quit because I was tired."
+- This quote alone should make someone stop scrolling and feel something.
 
-SLIDES 2-6:
-- 5 powerful, raw motivational quotes about quitting ${nicheName}.
-- Each quote MUST reference specific details of THIS addiction — not generic inspiration that could apply to anything.
-- Use the content angle above to guide the emotional direction. Vary the tone: some angry, some vulnerable, some darkly funny, some triumphant.
-- Each quote should be a standalone statement that hits hard.
-- NEVER repeat themes across slides. Each must offer a genuinely different perspective or insight.
+SLIDES 2-6 (5 STANDALONE QUOTES):
+- Each slide is ONE independent motivational quote about quitting ${nicheName} or being in recovery from it.
+- Every quote MUST be specific to ${nicheName} — mention the substance, its effects, its rituals, or its specific recovery experience. If you could swap in any other addiction and the quote still works, it's too generic. REWRITE IT.
+- Quotes should be INSPIRATIONAL and EMPOWERING — about strength, clarity, freedom, choosing yourself, the beauty of sobriety.
+- Vary the emotional tone: triumphant, fierce, gentle, reflective, defiant, grateful.
+- Keep quotes concise — 1-3 sentences max. They go on images.
+- Each quote is COMPLETELY independent. No "Part 1, Part 2" energy. No narrative arc.
 
 SLIDE 7 (CTA):
 - Text MUST be exactly: Quit with the Sunflower Sober app
-- No asterisks, no stars, no ** characters, no markdown formatting. Plain text only.
+- No variations. Plain text only.
 
 CRITICAL: You MUST return exactly 7 slides in the JSON array. All 7 must be present.
 
+ABSOLUTE BANNED CHARACTERS AND FORMATTING:
+- Do NOT use em dashes (—). Use periods or commas instead.
+- Do NOT use en dashes (–).
+- Do NOT use asterisks (*), markdown bold (**), or any special formatting.
+- Plain text only. No special characters.
+
 ABSOLUTE BANNED PHRASES (instant reject if any appear):
-"one day at a time", "recovery is a journey", "you are not alone", "it gets better", "rock bottom" (as motivation), "breaking free", "chose life", "found the light", "finally showing up", "rewrite your story", "you're worth it", "believe in yourself", "light at the end", "stronger than you know", "recovery is possible", "take it one step", "new chapter", "healing journey", "self-love", "your story isn't over", "show up for myself", "choose smarter", "staying consistent", "morning gratitude"
+"one day at a time", "recovery is a journey", "you are not alone", "it gets better", "rock bottom" (as motivation), "breaking free", "chose life", "found the light", "finally showing up", "rewrite your story", "you're worth it", "believe in yourself", "light at the end", "stronger than you know", "recovery is possible", "take it one step", "new chapter", "healing journey", "self-love", "your story isn't over", "show up for myself", "choose smarter", "staying consistent", "morning gratitude", "you've got this", "stay strong", "never give up", "the struggle is worth it"
 
-BANNED CHARACTERS: Do NOT use asterisks (*), markdown bold (**), or any special formatting. Plain text only.
+VOICE: Write like someone who beat THIS SPECIFIC addiction and is sharing hard-won wisdom. Raw, real, specific. Not a therapist, not a greeting card.
 
-VOICE: Write like someone who's been through THIS SPECIFIC addiction and is sharing what they learned. Not a therapist, not a brand — a real person.
-
-QUALITY CHECK: Triple-check ALL text for spelling, grammar, and typos. This text gets rendered on images — errors will be visible.
+QUALITY CHECK: Triple-check ALL text for spelling, grammar, and typos. No em dashes. This text gets rendered on images — errors will be visible.
 
 ${sceneInstr ? `IMAGE SCENE RULES: ${sceneInstr}` : ''}
 
