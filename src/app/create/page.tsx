@@ -129,12 +129,34 @@ async function compositeScreenshotSlide(bgDataUrl: string, screenshotUrl: string
       // Load and draw screenshot overlay
       const screenshot = new Image();
       screenshot.onload = () => {
-        // Medium size — 60% of image width, centered, in upper portion
+        // Draw text ABOVE the screenshot
+        const fontSize = bg.width * 0.055;
+        ctx.font = `bold ${fontSize}px "Helvetica Neue", Helvetica, Arial, sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'top';
+        const textY = bg.height * 0.06;
+
+        // Text outline
+        ctx.strokeStyle = 'rgba(0, 0, 0, 0.9)';
+        ctx.lineWidth = fontSize * 0.12;
+        ctx.lineJoin = 'round';
+        ctx.miterLimit = 2;
+        ctx.strokeText(text, bg.width / 2, textY);
+
+        // Text fill
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.7)';
+        ctx.shadowBlur = fontSize * 0.25;
+        ctx.fillStyle = 'white';
+        ctx.fillText(text, bg.width / 2, textY);
+        ctx.shadowColor = 'transparent';
+        ctx.shadowBlur = 0;
+
+        // Medium size screenshot — 60% of image width, centered, below text
         const targetWidth = bg.width * 0.6;
         const scale = targetWidth / screenshot.width;
         const targetHeight = screenshot.height * scale;
         const x = (bg.width - targetWidth) / 2;
-        const y = bg.height * 0.08;
+        const y = textY + fontSize * 1.5 + bg.height * 0.03;
 
         // Draw rounded rectangle shadow
         const radius = 20;
@@ -155,26 +177,6 @@ async function compositeScreenshotSlide(bgDataUrl: string, screenshotUrl: string
         ctx.clip();
         ctx.drawImage(screenshot, x, y, targetWidth, targetHeight);
         ctx.restore();
-
-        // Draw text at bottom
-        const fontSize = bg.width * 0.055;
-        ctx.font = `bold ${fontSize}px "Helvetica Neue", Helvetica, Arial, sans-serif`;
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'top';
-        const textY = y + targetHeight + bg.height * 0.05;
-
-        // Outline
-        ctx.strokeStyle = 'rgba(0, 0, 0, 0.9)';
-        ctx.lineWidth = fontSize * 0.12;
-        ctx.lineJoin = 'round';
-        ctx.miterLimit = 2;
-        ctx.strokeText(text, bg.width / 2, textY);
-
-        // Fill
-        ctx.shadowColor = 'rgba(0, 0, 0, 0.7)';
-        ctx.shadowBlur = fontSize * 0.25;
-        ctx.fillStyle = 'white';
-        ctx.fillText(text, bg.width / 2, textY);
 
         resolve(canvas.toDataURL('image/png'));
       };
