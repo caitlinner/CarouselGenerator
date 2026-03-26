@@ -80,19 +80,8 @@ async function compositeTextOnImage(bgDataUrl: string, text: string, slideIndex:
       canvas.height = img.height;
       const ctx = canvas.getContext('2d')!;
 
-      // Draw background
+      // Draw background — no dark overlay, keep image fully visible
       ctx.drawImage(img, 0, 0);
-
-      // Semi-transparent dark overlay for text readability
-      const overlayY = img.height * 0.15;
-      const overlayH = img.height * 0.7;
-      const gradient = ctx.createLinearGradient(0, overlayY, 0, overlayY + overlayH);
-      gradient.addColorStop(0, 'rgba(0, 0, 0, 0)');
-      gradient.addColorStop(0.15, 'rgba(0, 0, 0, 0.55)');
-      gradient.addColorStop(0.85, 'rgba(0, 0, 0, 0.55)');
-      gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
-      ctx.fillStyle = gradient;
-      ctx.fillRect(0, overlayY, img.width, overlayH);
 
       // Text settings
       const padding = img.width * 0.08;
@@ -100,7 +89,7 @@ async function compositeTextOnImage(bgDataUrl: string, text: string, slideIndex:
       const isSlide1 = slideIndex === 0;
       const isCTA = slideIndex === 6;
 
-      let fontSize = isCTA ? img.width * 0.055 : isSlide1 ? img.width * 0.065 : img.width * 0.048;
+      let fontSize = isCTA ? img.width * 0.06 : isSlide1 ? img.width * 0.07 : img.width * 0.048;
       const lineHeight = fontSize * 1.35;
 
       ctx.textAlign = 'center';
@@ -128,7 +117,8 @@ async function compositeTextOnImage(bgDataUrl: string, text: string, slideIndex:
       }
 
       let lines = wrapText(text, maxWidth, fontSize);
-      while (lines.length * lineHeight > overlayH * 0.8 && fontSize > img.width * 0.03) {
+      const maxTextHeight = img.height * 0.7;
+      while (lines.length * lineHeight > maxTextHeight && fontSize > img.width * 0.03) {
         fontSize *= 0.9;
         lines = wrapText(text, maxWidth, fontSize);
       }
@@ -137,18 +127,29 @@ async function compositeTextOnImage(bgDataUrl: string, text: string, slideIndex:
       const startY = (img.height - totalTextHeight) / 2;
 
       ctx.font = `bold ${fontSize}px "Helvetica Neue", Helvetica, Arial, sans-serif`;
-      ctx.fillStyle = 'white';
-      ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
-      ctx.shadowBlur = fontSize * 0.15;
-      ctx.shadowOffsetX = 0;
-      ctx.shadowOffsetY = fontSize * 0.05;
+      ctx.textAlign = 'center';
 
       lines.forEach((line, i) => {
         const y = startY + i * (fontSize * 1.35);
-        ctx.strokeStyle = 'rgba(0, 0, 0, 0.6)';
-        ctx.lineWidth = fontSize * 0.06;
+
+        // Strong black outline for readability without dark overlay
+        ctx.strokeStyle = 'rgba(0, 0, 0, 0.9)';
+        ctx.lineWidth = fontSize * 0.12;
+        ctx.lineJoin = 'round';
+        ctx.miterLimit = 2;
         ctx.strokeText(line, img.width / 2, y);
+
+        // White fill with glow
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.7)';
+        ctx.shadowBlur = fontSize * 0.25;
+        ctx.shadowOffsetX = 0;
+        ctx.shadowOffsetY = fontSize * 0.04;
+        ctx.fillStyle = 'white';
         ctx.fillText(line, img.width / 2, y);
+
+        // Reset shadow for next iteration
+        ctx.shadowColor = 'transparent';
+        ctx.shadowBlur = 0;
       });
 
       // Slide number badge
