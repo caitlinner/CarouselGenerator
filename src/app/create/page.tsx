@@ -68,6 +68,13 @@ const IMAGE_STYLES = [
     desc: 'Adorable chubby 3D bee with glasses in different scenes delivering sobriety wisdom',
     preview: 'linear-gradient(135deg, #FFD700 0%, #FF8C00 100%)',
   },
+  {
+    id: 'pixar-substance',
+    emoji: '🍷',
+    label: 'Pixar Substance Character',
+    desc: 'The addiction itself as a personified Pixar character — a wine bottle villain, a slot machine con artist, a joint slacker, etc.',
+    preview: 'linear-gradient(135deg, #E74C3C 0%, #8E44AD 100%)',
+  },
 ];
 
 function CreateContent() {

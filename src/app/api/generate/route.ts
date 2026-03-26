@@ -31,6 +31,19 @@ const STYLE_PROMPTS: Record<string, string> = {
   'majestic-mountains': `Majestic realistic mountain landscape photograph with lush greenery, professional DSLR 8K quality, epic and awe-inspiring composition. IMPORTANT: NO people, NO humans, NO characters, NO silhouettes of people in ANY slide. Only mountains and natural landscape elements: towering peaks, green valleys, alpine meadows, misty forests, winding rivers, waterfalls, dramatic clouds. Each slide should feature a DIFFERENT mountain scene — foggy mountain road through pine forest, alpine lake with mountain reflection, lush green valley with distant peaks, misty mountain sunrise, dramatic mountain range with rolling clouds. Rich natural color grading with deep greens, moody grays, and atmospheric haze.`,
   '3d-animated-bee': `Adorable small chubby 3D Pixar-style animated bumblebee character with round black glasses, yellow and black striped body, tiny translucent buzzing wings, holding a small notepad in one hand and a yellow pencil in the other, big sparkling expressive eyes, warm friendly smile. The bee is the SAME character in every slide — same glasses, same size, same proportions, same cute design. IMPORTANT: Use the SAME bee character across ALL slides. The bee appears in DIFFERENT beautiful scenes for each slide: flower garden, rainy day with umbrella, sunrise meadow, cozy library, starlit night sky. Each scene has a different mood and color palette but the bee character is always recognizable. Pixar-quality 3D CGI render, soft volumetric lighting, shallow depth of field, hearts and flowers as recurring motifs. NO humans in any slide.`,
   'inspirational-sunsets': `Breathtaking sunset landscape photograph, professional DSLR 8K quality, warm rich color grading, emotionally uplifting and awe-inspiring vista. IMPORTANT: NO people, NO humans, NO characters, NO silhouettes of people in ANY slide. Only natural landscape elements: sky, clouds, water, mountains, fields, trees, horizon. Each slide should feature a different stunning sunset scene — ocean sunset, mountain sunset, desert sunset, meadow sunset, lake reflection sunset. Dramatic sky with vivid orange pink and purple clouds, god rays breaking through clouds.`,
+  'pixar-substance': '', // Dynamic — built at generation time based on niche
+};
+
+const SUBSTANCE_CHARACTERS: Record<string, string> = {
+  'general-sobriety': 'a Pixar-style 3D animated pill bottle character with arms, legs, big expressive eyes, and a mischievous grin — personified as a sneaky villain who pretends to be friendly',
+  'alcohol': 'a Pixar-style 3D animated wine bottle character with arms, legs, big expressive cartoon eyes, a charming but devious smile, and a tiny top hat — personified as a smooth-talking villain. Sometimes appears as a beer can or cocktail glass sidekick',
+  'gambling': 'a Pixar-style 3D animated slot machine character with arms, legs, big flashing cartoon eyes shaped like dollar signs, a cheeky grin with gold teeth, and spinning reels on its belly — personified as a flashy con artist',
+  'meth': 'a Pixar-style 3D animated crystal/rock character with jagged translucent edges, arms, legs, wild twitchy eyes with dilated pupils, and a cracked unsettling grin — personified as a hyperactive destructive gremlin',
+  'heroin': 'a Pixar-style 3D animated syringe character with arms, legs, droopy half-closed eyes, and a warm deceptive smile that hides danger — personified as a seductive liar who promises comfort',
+  'mdma': 'a Pixar-style 3D animated colorful pill/tablet character with arms, legs, rainbow swirl patterns, huge dilated pupils, a wide euphoric grin, and tiny wings — personified as a party fairy who crashes hard',
+  'cannabis': 'a Pixar-style 3D animated joint/spliff character with arms, legs, half-lidded red sleepy eyes, a lazy grin, and a tiny wisp of smoke coming from its head — personified as a chill slacker who steals your motivation',
+  'cocaine': 'a Pixar-style 3D animated powder bag character with arms, legs, wide manic eyes, a fast-talking mouth, and a sharp suit — personified as a hyper confident hustler who drains your wallet',
+  'fentanyl': 'a Pixar-style 3D animated tiny pill character that looks innocent and small but has a dark shadow looming behind it, big innocent-looking eyes that hide danger — personified as the most deceptive villain, looks harmless but is deadly',
 };
 
 export async function POST(req: NextRequest) {
@@ -45,7 +58,13 @@ export async function POST(req: NextRequest) {
       try {
         const { niche, styleId, textStyle } = await req.json();
         const nicheCtx = NICHE_CONTEXT[niche] || 'addiction recovery';
-        const stylePrompt = STYLE_PROMPTS[styleId] || STYLE_PROMPTS['pixar-animals'];
+        let stylePrompt = STYLE_PROMPTS[styleId] || STYLE_PROMPTS['pixar-animals'];
+
+        // Build dynamic prompt for pixar-substance style
+        if (styleId === 'pixar-substance') {
+          const characterDesc = SUBSTANCE_CHARACTERS[niche] || SUBSTANCE_CHARACTERS['general-sobriety'];
+          stylePrompt = `${characterDesc}. Pixar-quality 3D CGI render, soft volumetric lighting, cinematic composition, vibrant saturated colors, hyper-detailed texturing. IMPORTANT: Use the SAME personified substance character across ALL slides — same design, same proportions, same distinctive features. The character must be clearly recognizable as the same individual throughout the entire carousel. The character appears in DIFFERENT scenes for each slide showing different moods and situations. NO humans in any slide.`;
+        }
 
         // Step 1: Generate story text
         send({ progress: 5 });
@@ -113,6 +132,7 @@ export async function POST(req: NextRequest) {
           'sunflower-fields': 'ALL scenes must be ONLY sunflower field landscapes. NO people, NO humans, NO characters, NO silhouettes. Only sunflowers and natural elements: fields, petals, sky, clouds, hills, sunlight. Each slide should be a different sunflower field scene.',
           'majestic-mountains': 'ALL scenes must be ONLY majestic mountain landscapes with greenery. NO people, NO humans, NO characters, NO silhouettes. Only mountains and natural elements: peaks, valleys, forests, rivers, meadows, clouds, mist. Each slide should be a different mountain scene.',
           'inspirational-sunsets': 'ALL scenes must be ONLY sunset landscapes. NO people, NO humans, NO characters, NO silhouettes. Only natural elements: sky, clouds, water, mountains, fields, trees. Each slide should be a different breathtaking sunset location.',
+          'pixar-substance': `ALL scenes must feature the SAME personified substance character — the addiction itself as a Pixar-style 3D animated character. The character is the substance/vice personified (e.g., a wine bottle with arms and legs, a slot machine character, a joint character). Keep the SAME character design across all slides but show them in different scenes and moods. NO humans.`,
         };
 
         const sceneInstr = SCENE_INSTRUCTIONS[styleId] || '';
