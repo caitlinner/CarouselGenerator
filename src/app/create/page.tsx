@@ -47,7 +47,7 @@ async function compositeTextOnImage(bgDataUrl: string, text: string, slideIndex:
       const isSlide1 = slideIndex === 0;
       const isCTA = text.toLowerCase().includes('sunflower sober app');
 
-      let fontSize = isCTA ? img.width * 0.06 : isSlide1 ? img.width * 0.07 : img.width * 0.048;
+      let fontSize = isCTA ? img.width * 0.06 : isSlide1 ? img.width * 0.055 : img.width * 0.048;
 
       ctx.textAlign = 'center';
       ctx.textBaseline = 'top';
@@ -447,7 +447,7 @@ function CreateContent() {
       <div className="flex items-center justify-between mb-8 flex-wrap gap-4">
         <div>
           <h1 className="text-2xl font-bold" style={{ color: '#4A1A8A' }}>{storyTitle || 'Your Carousel'}</h1>
-          <p className="text-gray-500 text-sm mt-1">9 slides — {styleObj?.label} — {textStyleObj?.label} — {NICHE_LABELS[niche]}</p>
+          <p className="text-gray-500 text-sm mt-1">{finalImages.length} slides — {styleObj?.label} — {textStyleObj?.label} — {NICHE_LABELS[niche]}</p>
         </div>
         <div className="flex gap-3">
           <button onClick={() => { setStep('style'); setFinalImages([]); setSlideTexts([]); setStoryTitle(''); }}
@@ -466,22 +466,8 @@ function CreateContent() {
               {img ? <img src={img} alt={slideTexts[i] || `Slide ${i + 1}`} className="w-full h-full object-cover" />
                 : <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm">No image</div>}
             </div>
-            {slideTexts[i] && <div className="mt-2 text-xs text-gray-500 line-clamp-2">{slideTexts[i]}</div>}
           </div>
         ))}
-      </div>
-
-      <div className="bg-white rounded-2xl p-8 border border-gray-100 shadow-sm">
-        <h3 className="font-medium text-sm text-gray-500 mb-4">📱 Mobile Carousel Preview</h3>
-        <div className="flex gap-3 overflow-x-auto pb-4 snap-x snap-mandatory">
-          {finalImages.map((img, i) => (
-            <div key={i} className="snap-center shrink-0 w-[280px]">
-              <div className="aspect-[3/4] rounded-xl overflow-hidden bg-gray-100 border border-gray-200">
-                <img src={img} alt={`Slide ${i + 1}`} className="w-full h-full object-cover" />
-              </div>
-            </div>
-          ))}
-        </div>
       </div>
     </div>
   );
