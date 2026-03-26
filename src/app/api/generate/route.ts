@@ -175,18 +175,22 @@ NICHE CONTEXT: ${nicheCtx}
 Randomization seed (use this to vary your creative choices): ${randomSeed}
 
 TEXT STYLE: EDUCATIONAL LISTICLE
+CONTENT ANGLE: ${angle.name.toUpperCase()} — ${angle.hook}
 Generate exactly 7 slides.
 
 SLIDE 1 (THE HOOK TITLE):
-- This is a bold, catchy listicle title that grabs attention and NAMES the addiction/substance.
-- It should feel like a real person sharing their experience or hard-won knowledge.
-- Examples of the EXACT vibe and format:
-  • "5 Things That Helped Me Stay Sober"
-  • "How I Finally Broke Free From the Weekend Drinking Cycle"
-  • "5 Advice to Quit Coke"
-  • "5 Rules to Protect My Sobriety"
-  • "5 Truths About Fentanyl"
-  • "5 Sobriety Quotes That Helped On My Hardest Days"
+- Bold, catchy listicle title that grabs attention and NAMES the addiction/substance.
+- Must feel like a real person sharing experience or hard-won knowledge.
+- VARY the topic based on the content angle above. Examples of different angles:
+  • Practical tips: "5 Things That Helped Me Quit ${nicheName}" / "5 Rules to Protect My Sobriety"
+  • Hard truths: "5 Truths About ${nicheName} Nobody Talks About" / "5 Lies ${nicheName} Told Me"
+  • Science/health: "5 Things That Happen to Your Brain After Quitting ${nicheName}" / "What ${nicheName} Actually Does to Your Body"
+  • Emotional: "5 Moments That Made Me Realize I Had to Quit ${nicheName}" / "5 Things I Lost to ${nicheName}"
+  • Recovery wins: "5 Things That Got Better After I Quit ${nicheName}" / "5 Surprises in My First Year Sober"
+  • Warning signs: "5 Signs Your ${nicheName} Use Isn't 'Casual' Anymore" / "5 Red Flags I Ignored"
+  • Relationships: "5 Ways ${nicheName} Destroyed My Relationships" / "5 Conversations I Avoided Because of ${nicheName}"
+  • Financial: "5 Things I Could Afford After Quitting ${nicheName}" / "What ${nicheName} Really Cost Me"
+- Pick a DIFFERENT angle each time based on the seed and content angle. Do NOT default to the same "5 tips" format every time.
 - MUST be specific to ${nicheName}. Name the substance/behavior directly.
 - Keep it interesting — make people want to swipe.
 
