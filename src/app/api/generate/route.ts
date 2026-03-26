@@ -56,7 +56,7 @@ export async function POST(req: NextRequest) {
       }
 
       try {
-        const { niche, styleId, textStyle, imagesOnly, textOnly } = await req.json();
+        const { niche, styleId, textStyle } = await req.json();
         const nicheCtx = NICHE_CONTEXT[niche] || 'addiction recovery';
         let stylePrompt = STYLE_PROMPTS[styleId] || STYLE_PROMPTS['pixar-animals'];
 
@@ -66,8 +66,8 @@ export async function POST(req: NextRequest) {
           stylePrompt = `${characterDesc}. Pixar-quality 3D CGI render, soft volumetric lighting, cinematic composition, vibrant saturated colors, hyper-detailed texturing. IMPORTANT: Use the SAME personified substance character across ALL slides — same design, same proportions, same distinctive features. The character must be clearly recognizable as the same individual throughout the entire carousel. The character appears in DIFFERENT scenes for each slide showing different moods and situations. NO humans in any slide.`;
         }
 
-        // ── TEXT-ONLY MODE: generate text and return immediately ──
-        if (textOnly) {
+        // ── REMOVED TEXT-ONLY MODE ──
+        if (false) {
           send({ progress: 10 });
 
           // Randomize story structure
@@ -162,8 +162,8 @@ Return ONLY valid JSON: {"title":"...","slides":[{"text":"..."},{"text":"..."},{
           return;
         }
 
-        // ── IMAGES-ONLY MODE: generate backgrounds with generic scenes ──
-        if (imagesOnly) {
+        // ── REMOVED IMAGES-ONLY MODE ──
+        if (false) {
           const GENERIC_SCENES = [
             'A serene, emotionally evocative scene perfect for a carousel cover or opening hook',
             'A contemplative, introspective scene suggesting reflection and change',
@@ -245,9 +245,9 @@ This is slide ${i + 1} of 7 in a carousel series. Visual consistency across all 
           return;
         }
 
-        // ── FULL MODE (legacy) ──
+        // ── FULL MODE: text first → images influenced by text → client composites text on top ──
         // Step 1: Generate story text
-        send({ progress: 5 });
+        send({ progress: 5, status: 'Writing carousel text...' });
 
         // Randomize story structure to prevent repetitive outputs
         const STORY_ANGLES = [
@@ -491,16 +491,17 @@ Return ONLY valid JSON with exactly 7 slides:
 
         send({
           progress: 10,
+          status: 'Text ready — generating images influenced by your content...',
           storyTitle: story.title,
           slideTexts: story.slides.map(s => s.text),
         });
 
-        // Step 2: Generate images using Imagen 4
+        // Step 2: Generate images using Imagen 4 (scenes influenced by text)
         const images: string[] = [];
 
         for (let i = 0; i < Math.min(7, story.slides.length); i++) {
           const slide = story.slides[i];
-          send({ progress: 10 + (i * 12) });
+          send({ progress: 10 + (i * 12), status: `Generating image ${i + 1} of 7...` });
 
           const imagePrompt = `${stylePrompt}
 
