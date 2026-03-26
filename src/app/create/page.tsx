@@ -80,7 +80,7 @@ async function compositeTextOnImage(bgDataUrl: string, text: string, slideIndex:
       }
 
       const totalTextHeight = lines.length * (fontSize * 1.35);
-      const startY = (img.height - totalTextHeight) / 2;
+      const startY = img.height * 0.08;
 
       ctx.font = `bold ${fontSize}px "Helvetica Neue", Helvetica, Arial, sans-serif`;
       ctx.textAlign = 'center';
@@ -103,22 +103,6 @@ async function compositeTextOnImage(bgDataUrl: string, text: string, slideIndex:
         ctx.shadowColor = 'transparent';
         ctx.shadowBlur = 0;
       });
-
-      // Slide number badge
-      if (!isCTA) {
-        const badgeSize = img.width * 0.06;
-        const badgeX = padding;
-        const badgeY = img.height * 0.04;
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-        ctx.beginPath();
-        ctx.arc(badgeX + badgeSize / 2, badgeY + badgeSize / 2, badgeSize / 2, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.fillStyle = '#1a1a2e';
-        ctx.font = `bold ${badgeSize * 0.55}px "Helvetica Neue", Helvetica, Arial, sans-serif`;
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText(`${slideIndex + 1}`, badgeX + badgeSize / 2, badgeY + badgeSize / 2);
-      }
 
       resolve(canvas.toDataURL('image/png'));
     };
