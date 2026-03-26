@@ -147,7 +147,7 @@ Generate exactly 7 slides.
 SLIDES 1-6: Each slide is a powerful, raw motivational quote about quitting ${nicheName}. These must be SPECIFIC to this addiction — not generic inspiration. They should hit hard emotionally, feel like they came from someone who lived it, and be highly shareable. Each quote should be a standalone statement.
 
 SLIDE 7 (CTA):
-- Text MUST be exactly: Quit with the Sunflower Sober app 🌻
+- Text MUST be exactly: Quit with the Sunflower Sober app
 - No asterisks, no stars, no ** characters, no markdown formatting. Plain text only.
 
 CRITICAL: You MUST return exactly 7 slides in the JSON array. All 7 must be present.
@@ -212,7 +212,7 @@ SLIDES 2-6 (NUMBERED TIPS 1 THROUGH 5):
   • MDMA: Tuesday depression, serotonin depletion, chasing the first roll, jaw clenching
 
 SLIDE 7 (CTA):
-- Text MUST be exactly: Quit with the Sunflower Sober app 🌻
+- Text MUST be exactly: Quit with the Sunflower Sober app
 - No asterisks, no stars, no ** characters, no markdown formatting. Plain text only.
 - No variations from that exact text.
 
@@ -291,8 +291,7 @@ Return ONLY valid JSON with exactly 7 slides:
           const slide = story.slides[i];
           send({ progress: 10 + (i * 12) });
 
-          // Keep text short for image rendering — AI image models struggle with long text
-          const displayText = slide.text.length > 120 ? slide.text.slice(0, 117) + '...' : slide.text;
+          const displayText = slide.text;
 
           const imagePrompt = `${stylePrompt}
 
