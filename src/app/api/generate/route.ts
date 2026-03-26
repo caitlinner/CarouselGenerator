@@ -125,7 +125,7 @@ Return ONLY valid JSON: {"title":"...","slides":[{"text":"..."},{"text":"..."},{
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
                 contents: [{ parts: [{ text: textPrompt }] }],
-                generationConfig: { temperature: 0.95, maxOutputTokens: 2048, thinkingConfig: { thinkingBudget: 0 } },
+                generationConfig: { temperature: 1.2, maxOutputTokens: 2048, thinkingConfig: { thinkingBudget: 0 } },
               }),
             }
           );
@@ -340,6 +340,7 @@ ADDICTION TYPE: ${nicheName}
 NICHE CONTEXT: ${nicheCtx}
 
 Randomization seed (use this to vary your creative choices): ${randomSeed}
+CRITICAL UNIQUENESS RULE: You MUST generate completely fresh, never-before-seen content. Do NOT fall back on common addiction tropes or recycled ideas. Use the seed number above to push your creativity in unexpected directions. Think of a SPECIFIC, surprising angle that hasn't been done before. Avoid generic motivational content — be raw, specific, and original. If your first idea feels obvious, throw it away and dig deeper.
 
 TEXT STYLE: MOTIVATIONAL QUOTES
 CONTENT ANGLE: ${angle.name.toUpperCase()} — ${angle.hook}
@@ -384,6 +385,7 @@ ADDICTION TYPE: ${nicheName}
 NICHE CONTEXT: ${nicheCtx}
 
 Randomization seed (use this to vary your creative choices): ${randomSeed}
+CRITICAL UNIQUENESS RULE: You MUST generate completely fresh, never-before-seen content. Do NOT fall back on common addiction tropes or recycled ideas. Use the seed number above to push your creativity in unexpected directions. Think of a SPECIFIC, surprising angle that hasn't been done before. Avoid generic listicles — be raw, specific, and original. If your first idea feels obvious, throw it away and dig deeper.
 
 TEXT STYLE: EDUCATIONAL LISTICLE
 CONTENT ANGLE: ${angle.name.toUpperCase()} — ${angle.hook}
@@ -453,7 +455,7 @@ Return ONLY valid JSON with exactly 7 slides:
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               contents: [{ parts: [{ text: storyPrompt }] }],
-              generationConfig: { temperature: 0.95, maxOutputTokens: 2048, thinkingConfig: { thinkingBudget: 0 } },
+              generationConfig: { temperature: 1.2, maxOutputTokens: 2048, thinkingConfig: { thinkingBudget: 0 } },
             }),
           }
         );
