@@ -201,14 +201,14 @@ Randomization seed (use this to vary your creative choices): ${randomSeed}
 CRITICAL UNIQUENESS RULE: You MUST generate completely fresh, never-before-seen content. Do NOT fall back on common addiction tropes or recycled ideas. Use the seed number above to push your creativity in unexpected directions. Think of a SPECIFIC, surprising angle that hasn't been done before. Avoid generic motivational content — be raw, specific, and original. If your first idea feels obvious, throw it away and dig deeper.
 
 TEXT STYLE: STANDALONE MOTIVATIONAL QUOTES
-Generate exactly 7 slides. Each slide is ONE standalone inspirational quote about recovery, sobriety, or quitting ${nicheName}. NOT a storyline. NOT connected slides. Each quote stands completely on its own.
+Generate exactly 4 slides. Each content slide is ONE standalone inspirational quote about recovery, sobriety, or quitting ${nicheName}. NOT a storyline. NOT connected slides. Each quote stands completely on its own.
 
 SLIDE 1 (HOOK QUOTE):
 - The most powerful, scroll-stopping quote. MUST name ${nicheName} or reference it specifically.
 - Short, punchy, emotional. Think: "I didn't quit ${nicheName} because I was strong. I quit because I was tired."
 - This quote alone should make someone stop scrolling and feel something.
 
-SLIDES 2-6 (5 STANDALONE QUOTES):
+SLIDES 2-3 (2 STANDALONE QUOTES):
 - Each slide is ONE independent motivational quote about quitting ${nicheName} or being in recovery from it.
 - Every quote MUST be specific to ${nicheName} — mention the substance, its effects, its rituals, or its specific recovery experience. If you could swap in any other addiction and the quote still works, it's too generic. REWRITE IT.
 - Quotes should be INSPIRATIONAL and EMPOWERING — about strength, clarity, freedom, choosing yourself, the beauty of sobriety.
@@ -216,11 +216,11 @@ SLIDES 2-6 (5 STANDALONE QUOTES):
 - Keep quotes concise — 1-3 sentences max. They go on images.
 - Each quote is COMPLETELY independent. No "Part 1, Part 2" energy. No narrative arc.
 
-SLIDE 7 (CTA):
+SLIDE 4 (CTA):
 - Text MUST be exactly: Quit with the Sunflower Sober app
 - No variations. Plain text only.
 
-CRITICAL: You MUST return exactly 7 slides in the JSON array. All 7 must be present.
+CRITICAL: You MUST return exactly 4 slides in the JSON array. All 4 must be present.
 
 ABSOLUTE BANNED CHARACTERS AND FORMATTING:
 - Do NOT use em dashes (—). Use periods or commas instead.
@@ -363,15 +363,18 @@ Return ONLY valid JSON with exactly 7 slides:
         // Step 2: Generate images using Imagen 4 (scenes influenced by text)
         const images: string[] = [];
 
-        // Generate 9 images: 7 for content slides + 2 for screenshot overlay slides
-        const totalImages = 9;
+        // Generate images: content slides + 2 for screenshot overlays (tracker + community) + 1 CTA
+        // Motivational: 3 content + tracker + community + CTA = 6
+        // Educational: 6 content + tracker + community + CTA = 9
+        const contentSlideCount = textStyle === 'motivational' ? 3 : 6;
+        const totalImages = contentSlideCount + 3; // +tracker +community +CTA
         for (let i = 0; i < totalImages; i++) {
           const slide = i < story.slides.length ? story.slides[i] : null;
           const extraScenes = [
             'A warm, inviting scene that conveys tracking progress and personal growth',
             'A welcoming, communal scene that conveys connection, support, and belonging',
           ];
-          const sceneText = slide ? slide.scene : extraScenes[i - 7] || extraScenes[0];
+          const sceneText = slide ? slide.scene : extraScenes[i - contentSlideCount] || extraScenes[0];
           send({ progress: 10 + (i * 10), status: `Generating image ${i + 1} of ${totalImages}...` });
 
           const imagePrompt = `${stylePrompt}

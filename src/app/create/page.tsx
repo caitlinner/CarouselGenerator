@@ -17,7 +17,7 @@ const NICHE_LABELS: Record<string, string> = {
 
 const TEXT_STYLES = [
   { id: 'educational', emoji: '📚', label: 'Educational', desc: 'Bold hook title on slide 1, then 5 numbered tips on slides 2-6, CTA on slide 9', preview: 'linear-gradient(135deg, #4A1A8A 0%, #8B5DC8 100%)' },
-  { id: 'motivational', emoji: '💪', label: 'Motivational', desc: '6 powerful motivational quotes — raw, emotional, and shareable. CTA on slide 9', preview: 'linear-gradient(135deg, #F5A623 0%, #FF6B6B 100%)' },
+  { id: 'motivational', emoji: '💪', label: 'Motivational', desc: '3 powerful motivational quotes, then tracker, community, and CTA', preview: 'linear-gradient(135deg, #F5A623 0%, #FF6B6B 100%)' },
 ];
 
 const IMAGE_STYLES = [
@@ -45,7 +45,7 @@ async function compositeTextOnImage(bgDataUrl: string, text: string, slideIndex:
       const padding = img.width * 0.08;
       const maxWidth = img.width - padding * 2;
       const isSlide1 = slideIndex === 0;
-      const isCTA = slideIndex === 6;
+      const isCTA = text.toLowerCase().includes('sunflower sober app');
 
       let fontSize = isCTA ? img.width * 0.06 : isSlide1 ? img.width * 0.07 : img.width * 0.048;
 
@@ -269,13 +269,16 @@ function CreateContent() {
                   setSlideTexts(parsed.slideTexts);
                 }
                 if (parsed.images) {
-                  // Reorder: slides 1-6 content, slide 7 tracker, slide 8 community, slide 9 CTA
+                  // Assemble slides: content → tracker → community → CTA
+                  // Motivational: 3 content + tracker + community + CTA = 6
+                  // Educational: 6 content + tracker + community + CTA = 9
+                  const contentCount = textStyle === 'motivational' ? 3 : 6;
                   setGenStatus('Compositing text onto images...');
                   setGenProgress(90);
                   const composited: string[] = [];
                   
-                  // Slides 1-6: content text overlay (first 6 text slides)
-                  for (let i = 0; i < 6; i++) {
+                  // Content slides with text overlay
+                  for (let i = 0; i < contentCount; i++) {
                     if (parsed.images[i] && localSlideTexts[i]) {
                       const result = await compositeTextOnImage(parsed.images[i], localSlideTexts[i], i, finalStyleId ?? '');
                       composited.push(result);
@@ -284,29 +287,30 @@ function CreateContent() {
                     }
                   }
 
-                  // Slide 7: tracker screenshot
+                  // Tracker screenshot slide
                   setGenStatus('Adding tracker screenshot...');
                   setGenProgress(93);
-                  if (parsed.images[6]) {
+                  if (parsed.images[contentCount]) {
                     const trackerUrl = TRACKER_SCREENSHOTS[niche] || TRACKER_SCREENSHOTS['general-sobriety'];
-                    const slide7 = await compositeScreenshotSlide(parsed.images[6], trackerUrl, 'Track your sobriety');
-                    composited.push(slide7);
+                    const trackerSlide = await compositeScreenshotSlide(parsed.images[contentCount], trackerUrl, 'Track your sobriety');
+                    composited.push(trackerSlide);
                   }
 
-                  // Slide 8: community screenshot
+                  // Community screenshot slide
                   setGenStatus('Adding community screenshot...');
                   setGenProgress(96);
-                  if (parsed.images[7]) {
-                    const slide8 = await compositeScreenshotSlide(parsed.images[7], COMMUNITY_SCREENSHOT, 'Connect with a sober community');
-                    composited.push(slide8);
+                  if (parsed.images[contentCount + 1]) {
+                    const communitySlide = await compositeScreenshotSlide(parsed.images[contentCount + 1], COMMUNITY_SCREENSHOT, 'Connect with a sober community');
+                    composited.push(communitySlide);
                   }
 
-                  // Slide 9: CTA text (last text slide = "Quit with the Sunflower Sober app")
+                  // CTA slide (last text slide)
                   setGenStatus('Adding CTA slide...');
                   setGenProgress(98);
-                  if (parsed.images[8] && localSlideTexts[6]) {
-                    const slide9 = await compositeTextOnImage(parsed.images[8], localSlideTexts[6], 8, finalStyleId ?? '');
-                    composited.push(slide9);
+                  const ctaTextIndex = localSlideTexts.length - 1;
+                  if (parsed.images[contentCount + 2] && localSlideTexts[ctaTextIndex]) {
+                    const ctaSlide = await compositeTextOnImage(parsed.images[contentCount + 2], localSlideTexts[ctaTextIndex], contentCount + 2, finalStyleId ?? '');
+                    composited.push(ctaSlide);
                   }
 
                   setFinalImages(composited);
