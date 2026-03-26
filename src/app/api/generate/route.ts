@@ -328,11 +328,11 @@ Return ONLY valid JSON with exactly 7 slides:
 
 Scene: ${slide.scene}
 
-IMPORTANT: Display this text prominently on the image in large bold white letters with a strong black outline/stroke for readability. The text must be spelled PERFECTLY with zero errors:
+IMPORTANT: Display this text prominently on the image in a clean, modern serif or sans-serif font (like the style used on TikTok carousel covers). Use Title Case capitalization — NOT ALL CAPS. White text with a subtle dark shadow or semi-transparent dark overlay behind the text for readability. The text must be spelled PERFECTLY with zero errors:
 
 "${displayText}"
 
-The text must be the focal point, large, centered, and clearly readable on mobile. White text with thick black outline. The background scene should support the emotional message. 3:4 portrait aspect ratio for Instagram/TikTok carousel. SPELL EVERY WORD CORRECTLY.
+The text must be the focal point, large, centered, and clearly readable on mobile. Clean elegant font styling, NOT blocky all-caps. The background scene should support the emotional message. 3:4 portrait aspect ratio for Instagram/TikTok carousel. SPELL EVERY WORD CORRECTLY.
 
 This is slide ${i + 1} of 7 in a carousel series. Visual consistency across all slides is critical.`;
 
