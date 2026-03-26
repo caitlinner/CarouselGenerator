@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, Suspense } from 'react';
+import { useState, useCallback, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 
 const NICHE_LABELS: Record<string, string> = {
@@ -70,6 +70,119 @@ const IMAGE_STYLES = [
   },
 ];
 
+// Composites text onto a background image using Canvas API
+async function compositeTextOnImage(bgDataUrl: string, text: string, slideIndex: number): Promise<string> {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = img.width;
+      canvas.height = img.height;
+      const ctx = canvas.getContext('2d')!;
+
+      // Draw background
+      ctx.drawImage(img, 0, 0);
+
+      // Semi-transparent dark overlay for text readability
+      const overlayY = img.height * 0.15;
+      const overlayH = img.height * 0.7;
+      const gradient = ctx.createLinearGradient(0, overlayY, 0, overlayY + overlayH);
+      gradient.addColorStop(0, 'rgba(0, 0, 0, 0)');
+      gradient.addColorStop(0.15, 'rgba(0, 0, 0, 0.55)');
+      gradient.addColorStop(0.85, 'rgba(0, 0, 0, 0.55)');
+      gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, overlayY, img.width, overlayH);
+
+      // Text settings
+      const padding = img.width * 0.08;
+      const maxWidth = img.width - padding * 2;
+      const isSlide1 = slideIndex === 0;
+      const isCTA = slideIndex === 6;
+
+      // Font sizing
+      let fontSize = isCTA ? img.width * 0.055 : isSlide1 ? img.width * 0.065 : img.width * 0.048;
+      const lineHeight = fontSize * 1.35;
+
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'top';
+
+      // Word wrap function
+      function wrapText(text: string, maxW: number, fs: number): string[] {
+        ctx.font = `bold ${fs}px "Helvetica Neue", Helvetica, Arial, sans-serif`;
+        const lines: string[] = [];
+        // Split on explicit newlines first
+        const paragraphs = text.split('\n');
+        for (const para of paragraphs) {
+          const words = para.split(' ');
+          let currentLine = '';
+          for (const word of words) {
+            const testLine = currentLine ? currentLine + ' ' + word : word;
+            if (ctx.measureText(testLine).width > maxW && currentLine) {
+              lines.push(currentLine);
+              currentLine = word;
+            } else {
+              currentLine = testLine;
+            }
+          }
+          if (currentLine) lines.push(currentLine);
+        }
+        return lines;
+      }
+
+      let lines = wrapText(text, maxWidth, fontSize);
+
+      // Auto-shrink if too many lines
+      while (lines.length * lineHeight > overlayH * 0.8 && fontSize > img.width * 0.03) {
+        fontSize *= 0.9;
+        lines = wrapText(text, maxWidth, fontSize);
+      }
+
+      const totalTextHeight = lines.length * (fontSize * 1.35);
+      const startY = (img.height - totalTextHeight) / 2;
+
+      // Draw text with shadow
+      ctx.font = `bold ${fontSize}px "Helvetica Neue", Helvetica, Arial, sans-serif`;
+      ctx.fillStyle = 'white';
+      ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
+      ctx.shadowBlur = fontSize * 0.15;
+      ctx.shadowOffsetX = 0;
+      ctx.shadowOffsetY = fontSize * 0.05;
+
+      lines.forEach((line, i) => {
+        const y = startY + i * (fontSize * 1.35);
+        // Draw outline
+        ctx.strokeStyle = 'rgba(0, 0, 0, 0.6)';
+        ctx.lineWidth = fontSize * 0.06;
+        ctx.strokeText(line, img.width / 2, y);
+        // Draw fill
+        ctx.fillText(line, img.width / 2, y);
+      });
+
+      // Slide number badge (top-left)
+      if (!isCTA) {
+        ctx.shadowColor = 'transparent';
+        ctx.shadowBlur = 0;
+        const badgeSize = img.width * 0.06;
+        const badgeX = padding;
+        const badgeY = img.height * 0.04;
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+        ctx.beginPath();
+        ctx.arc(badgeX + badgeSize / 2, badgeY + badgeSize / 2, badgeSize / 2, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#1a1a2e';
+        ctx.font = `bold ${badgeSize * 0.55}px "Helvetica Neue", Helvetica, Arial, sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(`${slideIndex + 1}`, badgeX + badgeSize / 2, badgeY + badgeSize / 2);
+      }
+
+      resolve(canvas.toDataURL('image/png'));
+    };
+    img.src = bgDataUrl;
+  });
+}
+
 function CreateContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -79,6 +192,7 @@ function CreateContent() {
   const [selectedTextStyle, setSelectedTextStyle] = useState<string | null>(null);
   const [selectedStyle, setSelectedStyle] = useState<string | null>(null);
   const [images, setImages] = useState<string[]>([]);
+  const [bgImages, setBgImages] = useState<string[]>([]);
   const [slideTexts, setSlideTexts] = useState<string[]>([]);
   const [storyTitle, setStoryTitle] = useState('');
   const [genProgress, setGenProgress] = useState(0);
@@ -103,6 +217,7 @@ function CreateContent() {
       const reader = res.body?.getReader();
       const decoder = new TextDecoder();
       let buffer = '';
+      let localSlideTexts: string[] = [];
 
       if (reader) {
         while (true) {
@@ -118,9 +233,24 @@ function CreateContent() {
                 const parsed = JSON.parse(line.slice(6));
                 if (parsed.progress !== undefined) setGenProgress(parsed.progress);
                 if (parsed.storyTitle) setStoryTitle(parsed.storyTitle);
-                if (parsed.slideTexts) setSlideTexts(parsed.slideTexts);
+                if (parsed.slideTexts) {
+                  localSlideTexts = parsed.slideTexts;
+                  setSlideTexts(parsed.slideTexts);
+                }
                 if (parsed.images) {
-                  setImages(parsed.images);
+                  // Background images received — now composite text on top programmatically
+                  setBgImages(parsed.images);
+                  setGenProgress(95);
+                  const composited: string[] = [];
+                  for (let i = 0; i < parsed.images.length; i++) {
+                    if (parsed.images[i] && localSlideTexts[i]) {
+                      const result = await compositeTextOnImage(parsed.images[i], localSlideTexts[i], i);
+                      composited.push(result);
+                    } else {
+                      composited.push(parsed.images[i] || '');
+                    }
+                  }
+                  setImages(composited);
                   setStep('preview');
                 }
                 if (parsed.error) throw new Error(parsed.error);
@@ -261,7 +391,7 @@ function CreateContent() {
           Generating your carousel...
         </h2>
         <p className="text-gray-500 mb-2">{styleObj?.label} — {NICHE_LABELS[niche]}</p>
-        <p className="text-sm text-purple-400 mb-8">Creating 7 images with sobriety text overlays</p>
+        <p className="text-sm text-purple-400 mb-8">Generating backgrounds → adding text overlay programmatically</p>
 
         <div className="w-full bg-gray-200 rounded-full h-3 mb-4 overflow-hidden">
           <div
@@ -278,7 +408,8 @@ function CreateContent() {
           {genProgress >= 58 && genProgress < 70 && 'Generating slide 5...'}
           {genProgress >= 70 && genProgress < 82 && 'Generating slide 6...'}
           {genProgress >= 82 && genProgress < 94 && 'Generating slide 7...'}
-          {genProgress >= 94 && 'Finalizing...'}
+          {genProgress >= 94 && genProgress < 100 && 'Compositing text onto images...'}
+          {genProgress >= 100 && 'Done!'}
         </p>
 
         {storyTitle && (

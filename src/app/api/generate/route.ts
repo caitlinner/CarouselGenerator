@@ -322,17 +322,13 @@ Return ONLY valid JSON with exactly 7 slides:
           const slide = story.slides[i];
           send({ progress: 10 + (i * 12) });
 
-          const displayText = slide.text;
-
           const imagePrompt = `${stylePrompt}
 
 Scene: ${slide.scene}
 
-IMPORTANT: Display this text prominently on the image in a clean, modern serif or sans-serif font (like the style used on TikTok carousel covers). Use Title Case capitalization — NOT ALL CAPS. White text with a subtle dark shadow or semi-transparent dark overlay behind the text for readability. The text must be spelled PERFECTLY with zero errors:
+Generate a beautiful background image with NO text, NO words, NO letters, NO numbers, NO captions, NO titles, NO watermarks anywhere in the image. The image must be completely free of any written content — pure visual scene only. Text will be added programmatically afterwards.
 
-"${displayText}"
-
-The text must be the focal point, large, centered, and clearly readable on mobile. Clean elegant font styling, NOT blocky all-caps. The background scene should support the emotional message. 3:4 portrait aspect ratio for Instagram/TikTok carousel. SPELL EVERY WORD CORRECTLY.
+3:4 portrait aspect ratio for Instagram/TikTok carousel. Leave space in the center for text overlay (slightly darker or simpler area in the middle third of the image works well).
 
 This is slide ${i + 1} of 7 in a carousel series. Visual consistency across all slides is critical.`;
 
