@@ -188,10 +188,10 @@ SLIDE 1 (THE HOOK TITLE):
 - MUST be specific to ${nicheName}. Name the substance/behavior directly.
 - Keep it interesting — make people want to swipe.
 
-SLIDES 2-6 (TIPS 1 THROUGH 5):
+SLIDES 2-6 (NUMBERED TIPS 1 THROUGH 5):
 - 5 educational tips, lessons, or pieces of advice about quitting ${nicheName}.
-- DO NOT number them. DO NOT prefix with "1." "2." etc. DO NOT say "Slide 1" "Slide 2" etc. Just write the text directly.
-- Format: A short punchy title/headline, then 2-3 sentences of real talk explaining it. Give enough detail to be genuinely helpful — not just a one-liner.
+- Number them 1-5. Format: "1. [Title]" then 2 sentences of real explanation.
+- NEVER include the words "Slide 1", "Slide 2", "Slide 3" etc — just the numbered tip itself.
 - Each tip MUST be specific to ${nicheName} — if you swapped the addiction name, the tip should NOT make sense.
 - Make it interesting and educational, not preachy. Like a friend sharing real advice.
 - Substance-specific details matter:
