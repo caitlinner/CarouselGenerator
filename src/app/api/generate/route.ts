@@ -8,7 +8,7 @@ const BASE_URL = 'https://generativelanguage.googleapis.com/v1beta';
 const NICHE_CONTEXT: Record<string, string> = {
   'general-sobriety': 'General sobriety/recovery. VIRAL ANGLES: the "is this the same person?" before/after disbelief, day counter milestones that make people do math ("wait, 847 days means they quit during COVID"), the specific embarrassing moment that was your last straw, the friend who stopped calling. EMOTIONAL HOOKS: shame spiral specifics, the 3am phone check, waking up and checking your bank account, the apology you never sent.',
 
-  'alcohol': 'Alcohol addiction. VIRAL ANGLES: "mommy wine culture" is manufactured by Big Alcohol targeting women 30-45, the "just one glass" that becomes a bottle by Thursday, the Instagram wine-o-clock memes that normalize dependency, hiding bottles in the recycling before your partner gets home. EMOTIONAL HOOKS: the morning mouth taste, checking your texts with dread, calling in sick on Monday again, your kid seeing you stumble, the exact moment you realized you were drinking alone every night. WHAT HITS: Pop culture references + wine culture critique = proven formula.',
+  'alcohol': 'Alcohol addiction. VIRAL ANGLES: the "just one drink" that becomes five, blacking out on a Tuesday, waking up and checking your phone with dread, hiding how much you really drink, the hangovers that stopped being funny. EMOTIONAL HOOKS: the morning mouth taste, checking your texts with dread, calling in sick on Monday again, the exact moment you realized you were drinking alone every night, promising yourself "never again" then doing it again Friday. WHAT HITS: Raw honesty about drinking culture, the gap between social drinking and dependency, the quiet shame of alcohol addiction.',
 
   'gambling': 'Gambling addiction. VIRAL ANGLES: sports betting apps designed like slot machines in your pocket, the "I\'ll win it back" lie you tell yourself at 4am, checking your phone during dinner for live odds, the parlay that was "guaranteed", borrowing money from people who trust you. EMOTIONAL HOOKS: the exact dollar amount you\'ve lost (specificity kills), the notification sound that Pavlov-trained you, refreshing the banking app knowing what you\'ll see, the spreadsheet of losses you\'ll never show anyone.',
 
@@ -277,7 +277,7 @@ SLIDES 2-6 (NUMBERED TIPS 1 THROUGH 5):
 - Each tip MUST be specific to ${nicheName} — if you swapped the addiction name, the tip should NOT make sense.
 - Make it interesting and educational, not preachy. Like a friend sharing real advice.
 - Substance-specific details matter:
-  • Alcohol: hangovers, wine culture, bars, drinking alone, morning regret, blackouts, the bottle
+  • Alcohol: hangovers, bars, drinking alone, morning regret, blackouts, the bottle, broken promises
   • Cannabis: wake-and-bake, brain fog, dreams returning, motivation, munchies, the high
   • Gambling: betting apps, parlays, the casino, chasing losses, checking odds
   • Meth: staying up for days, the crash, weight loss, paranoia, skin picking
