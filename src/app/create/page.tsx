@@ -81,7 +81,9 @@ async function compositeTextOnImage(bgDataUrl: string, text: string, slideIndex:
       }
 
       const totalTextHeight = lines.length * (fontSize * 1.35);
-      const startY = (img.height - totalTextHeight) / 2;
+      // Position text based on style
+      const topStyles = ['pixar-animals', '3d-animated-bee'];
+      const startY = topStyles.includes(styleId || '') ? img.height * 0.15 : (img.height - totalTextHeight) / 2;
 
       ctx.font = `bold ${fontSize}px "Helvetica Neue", Helvetica, Arial, sans-serif`;
       ctx.textAlign = 'center';
