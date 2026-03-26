@@ -26,7 +26,7 @@ const NICHE_CONTEXT: Record<string, string> = {
 };
 
 const STYLE_PROMPTS: Record<string, string> = {
-  'pixar-animals': `Pixar-quality 3D animated cute animal character, Disney/Pixar movie animation style, soft volumetric lighting, big expressive eyes full of emotion, vibrant saturated colors, cinematic composition, hyper-detailed soft fur or feathers, Pixar movie quality CGI render, adorable but emotionally deep. IMPORTANT: Each slide should feature a DIFFERENT adorable animal — mix it up with a wide variety such as: baby otter, red panda, baby elephant, fox cub, hedgehog, baby penguin, baby deer (fawn), corgi puppy, duckling, baby owl, koala, baby sea turtle, chinchilla, baby polar bear, kitten, golden retriever puppy, baby bunny, baby sloth, baby raccoon, hamster, baby giraffe. NEVER repeat the same animal species twice in one carousel. NO humans in any slide.`,
+  'pixar-animals': '', // Dynamic — built at generation time with random animal selection
   'sunflower-fields': `Beautiful animated/illustrated sunflower field in a warm, colorful cartoon/digital art style — NOT photorealistic, NOT a photograph. Think Pixar background art, Studio Ghibli fields, or vibrant digital illustration. Thousands of bright golden sunflowers filling the scene from foreground to background, lush green stems and leaves, rich saturated colors. IMPORTANT: NO people, NO humans, NO characters, NO silhouettes in ANY slide. Each slide MUST have a DIFFERENT sky and atmosphere — pick one per slide: golden sunset sky with orange/pink clouds, bright blue daytime sky with fluffy white clouds, dramatic purple/pink twilight, soft pastel sunrise with morning mist, stormy sky with dramatic clouds and light breaking through, starry night sky with moonlight on sunflowers, warm amber afternoon with lens flare. The sunflower field itself should vary too: endless rows to the horizon, close-up of giant sunflower heads, field on rolling hills, sunflowers by a winding path, field near a small pond reflection, aerial view of sunflower patterns. Vibrant warm color palette — golden yellows, deep greens, rich sky colors.`,
   'majestic-mountains': `Hyperrealistic mountain landscape photograph, shot on Hasselblad medium format, 8K resolution, jaw-droppingly real. ONLY mountains — nothing else. NO people, NO humans, NO animals, NO buildings, NO roads, NO vehicles, NO characters, NO silhouettes, NO man-made objects in ANY slide. Pure untouched mountain wilderness only: towering snow-capped peaks, dramatic ridgelines, mountain faces, alpine rock formations, mountain ranges stretching to infinity, volcanic peaks, jagged summits piercing clouds. Each slide MUST show a DIFFERENT mountain scene and mood — golden hour light on a massive peak, dramatic storm clouds swirling around a summit, misty mountain range at dawn, snow-covered peak under blue sky, mountain reflected in a pristine alpine lake, aerial view of endless mountain ridges, mountain silhouette at sunset. Motivational and awe-inspiring — the kind of image that makes you feel small but powerful. Cinematic color grading, dramatic lighting, extreme detail in rock textures and cloud formations.`,
   '3d-animated-bee': `Adorable small chubby 3D Pixar-style animated bumblebee character with round black glasses, yellow and black striped body, tiny translucent buzzing wings, big sparkling expressive eyes, warm friendly smile. The bee is the SAME character in every slide — same glasses, same size, same proportions, same cute design. IMPORTANT: The bee must appear in EVERY slide doing a DIFFERENT cute action — reading a book, holding a flower, sitting on a mushroom, flying through a garden, hugging a sunflower, waving, meditating, dancing, carrying a tiny sign, peeking around a corner, etc. Each slide should show the bee in a DIFFERENT beautiful scene with a different action and mood. Pixar-quality 3D CGI render, soft volumetric lighting, shallow depth of field, hearts and flowers as recurring motifs. NO humans in any slide.`,
@@ -34,6 +34,29 @@ const STYLE_PROMPTS: Record<string, string> = {
   'ocean': `Hyperrealistic ocean photograph, shot on Hasselblad medium format, 8K resolution, breathtakingly real. ONLY ocean — the ocean MUST be the primary subject in every image. NO people, NO humans, NO animals, NO boats, NO buildings, NO man-made objects, NO characters in ANY slide. Pure ocean in all its forms: massive crashing waves, calm turquoise shallows, deep navy blue open water, aerial view of ocean patterns, underwater light rays through crystal clear water, dramatic wave curling with spray, ocean surface reflecting sky colors. Each slide MUST show a DIFFERENT angle and color palette — turquoise tropical water from above, dark stormy ocean with dramatic waves, golden hour light sparkling on calm water, deep blue ocean stretching to horizon, emerald green wave curling with white foam, pink/purple sunset reflecting on still water, powerful wave crashing against rocks with spray. Inspirational and powerful — the vastness and beauty of the ocean. Cinematic color grading, stunning water textures, dramatic lighting.`,
   'pixar-substance': '', // Dynamic — built at generation time based on niche
 };
+
+const PIXAR_ANIMALS = [
+  'a tiny baby otter with sleek brown fur and big round eyes',
+  'a fluffy red panda with a bushy striped tail and curious expression',
+  'a baby elephant with oversized floppy ears and a playful trunk',
+  'an adorable fox cub with bright orange fur and a white-tipped tail',
+  'a tiny hedgehog with soft spines and a button nose',
+  'a baby penguin with a round belly and tiny flapping wings',
+  'a baby deer (fawn) with spotted fur and wobbly long legs',
+  'an adorable corgi puppy with stubby legs and a big smile',
+  'a fluffy yellow duckling with tiny wings and bright eyes',
+  'a baby owl with enormous round eyes and fluffy tufted feathers',
+  'a baby koala with round fluffy ears clinging to a eucalyptus branch',
+  'a baby sea turtle with a patterned shell and gentle eyes',
+  'a tiny chinchilla with impossibly soft grey fur and round ears',
+  'a baby polar bear cub with pure white fur and a black nose',
+  'a tiny grey kitten with big green eyes and a pink nose',
+  'a golden retriever puppy with floppy ears and a wagging tail',
+  'a baby bunny with long soft ears and a cotton-ball tail',
+  'a baby sloth with a permanent gentle smile and long arms',
+  'a baby raccoon with a striped tail and a little mask face',
+  'a tiny hamster with chubby cheeks and small pink paws',
+];
 
 const SUBSTANCE_CHARACTERS: Record<string, string> = {
   'general-sobriety': 'a Pixar-style 3D animated pill bottle character with arms, legs, big expressive eyes, and a mischievous grin — personified as a sneaky villain who pretends to be friendly',
@@ -60,6 +83,12 @@ export async function POST(req: NextRequest) {
         const { niche, styleId, textStyle } = await req.json();
         const nicheCtx = NICHE_CONTEXT[niche] || 'addiction recovery';
         let stylePrompt = STYLE_PROMPTS[styleId] || STYLE_PROMPTS['pixar-animals'];
+
+        // Build dynamic prompt for pixar-animals style — random animal per generation, consistent across slides
+        if (styleId === 'pixar-animals') {
+          const animal = PIXAR_ANIMALS[Math.floor(Math.random() * PIXAR_ANIMALS.length)];
+          stylePrompt = `Pixar-quality 3D animated cute animal character: ${animal}. Disney/Pixar movie animation style, soft volumetric lighting, big expressive eyes full of emotion, vibrant saturated colors, cinematic composition, hyper-detailed soft fur or feathers, Pixar movie quality CGI render, adorable but emotionally deep. IMPORTANT: Use the SAME character (${animal}) across ALL slides — same species, same fur/feather color, same size, same distinctive features. The character must be clearly recognizable as the same individual throughout the entire carousel. NO humans in any slide.`;
+        }
 
         // Build dynamic prompt for pixar-substance style
         if (styleId === 'pixar-substance') {
@@ -135,7 +164,7 @@ export async function POST(req: NextRequest) {
 
         // Style-specific scene instructions
         const SCENE_INSTRUCTIONS: Record<string, string> = {
-          'pixar-animals': 'Each slide must feature a DIFFERENT cute Pixar-style animated animal — never repeat the same species. Use a wide variety: baby otter, red panda, baby elephant, fox cub, hedgehog, baby penguin, fawn, corgi puppy, duckling, baby owl, koala, baby sea turtle, chinchilla, baby polar bear, kitten, golden retriever puppy, baby bunny, baby sloth, baby raccoon, hamster. Describe the specific animal for each scene. NO humans.',
+          'pixar-animals': 'ALL scenes must feature the SAME cute animated animal character — describe this exact same character in every scene doing different cute actions and in different settings. NO humans.',
           'sunflower-fields': 'ALL scenes must be animated/illustrated sunflower fields (NOT photos). NO people, NO humans, NO characters. Each slide MUST have a DIFFERENT sky — sunset, blue day, twilight, sunrise mist, stormy, starry night, warm amber. Vary the field composition too: wide view, close-up, rolling hills, path through field, pond reflection, aerial.',
           'majestic-mountains': 'ALL scenes must be ONLY hyperrealistic mountain landscapes. NO people, NO humans, NO animals, NO buildings, NO roads, NO man-made objects. ONLY mountains: peaks, ridges, summits, rock faces, snow, clouds. Each slide MUST have a different mountain and different lighting/mood.',
           'inspirational-sunsets': 'ALL scenes must be ONLY sunset landscapes. NO people, NO humans, NO characters, NO silhouettes. Only natural elements: sky, clouds, water, mountains, fields, trees. Each slide should be a different breathtaking sunset location.',
