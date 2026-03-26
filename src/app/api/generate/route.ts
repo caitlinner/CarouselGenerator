@@ -237,8 +237,8 @@ QUALITY CHECK: Triple-check ALL text for spelling, grammar, and typos. No em das
 
 ${sceneInstr ? `IMAGE SCENE RULES: ${sceneInstr}` : ''}
 
-Return ONLY valid JSON with exactly 7 slides:
-{"title":"carousel title","slides":[{"text":"overlay text","scene":"..."},{"text":"...","scene":"..."},{"text":"...","scene":"..."},{"text":"...","scene":"..."},{"text":"...","scene":"..."},{"text":"...","scene":"..."},{"text":"...","scene":"..."}]}`;
+Return ONLY valid JSON with exactly 4 slides (hook quote, 2 quotes, CTA):
+{"title":"carousel title","slides":[{"text":"hook quote","scene":"..."},{"text":"quote 2","scene":"..."},{"text":"quote 3","scene":"..."},{"text":"Quit with the Sunflower Sober app","scene":"..."}]}`;
         } else {
           // Educational (default)
           storyPrompt = `You write carousel text for addiction recovery content on TikTok and Instagram. The content must be SPECIFIC to the addiction type — not generic recovery advice.
