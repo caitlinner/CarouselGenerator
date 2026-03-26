@@ -251,56 +251,61 @@ This is slide ${i + 1} of 7 in a carousel series. Visual consistency across all 
 
         // Randomize story structure to prevent repetitive outputs
         const STORY_ANGLES = [
-          {
-            name: 'nobody-told-me',
-            arc: 'The thing nobody warned me about → The ugly reality → The moment it hit me → What I know now → CTA',
-            hook: 'Start with "Nobody told me that..." followed by a hyper-specific, unexpected truth about this addiction. NOT a generic observation — something that makes someone in recovery go "holy shit, yes."'
-          },
-          {
-            name: 'the-last-time',
-            arc: 'The last time I [used] → What happened in the next hour → The face of the person who found me → The version of me that exists now → CTA',
-            hook: 'Paint a cinematic first slide — a single sensory detail from the last time. The taste, the sound, the text message, the exact location. Make the reader SEE it.'
-          },
-          {
-            name: 'the-math',
-            arc: 'The dollar amount → What that could have been → The real cost (not money) → What I invest in now → CTA',
-            hook: 'Open with a SPECIFIC dollar amount or number that makes people gasp. "$47,000 in 3 years." "1,460 mornings." "23 friends\' funerals." Numbers stop scrollers.'
-          },
-          {
-            name: 'the-text-message',
-            arc: 'The text I sent at [time] → What I meant vs what I said → What they replied (or didn\'t) → The conversation I had sober → CTA',
-            hook: 'Start with a text-message-style confession — the kind of thing someone types at 2am and deletes in the morning. Raw, unfiltered, embarrassing.'
-          },
-          {
-            name: 'before-after-internal',
-            arc: 'What [day/time] looked like using → The ritual/routine of it → What [same day/time] looks like now → The small thing that made me cry with gratitude → CTA',
-            hook: 'Describe a hyper-specific time of day or weekly ritual — "Every Sunday at 11am" or "The first 4 minutes after waking up." Make people recognize their own patterns.'
-          },
-          {
-            name: 'the-lie-i-told',
-            arc: 'The lie I told everyone → The lie I told myself → The truth I couldn\'t say out loud → Saying it now → CTA',
-            hook: 'Start with the exact lie. Not "I lied about my drinking" — the SPECIFIC lie. "I\'m just tired." "I only had two." "I can stop whenever I want." One sentence that millions have said.'
-          },
-          {
-            name: 'they-dont-know',
-            arc: 'What my coworkers/friends/family see → What they don\'t see → The moment I almost got caught → Why I stopped hiding → CTA',
-            hook: 'Contrast the public persona vs private reality. "My boss thinks I\'m the most reliable person on the team" energy. The functional addict reveal.'
-          },
-          {
-            name: 'the-worst-part',
-            arc: 'The worst part isn\'t what you think → It\'s not the [obvious thing] → It\'s the [unexpected gut-punch] → But here\'s what nobody tells you about after → CTA',
-            hook: 'Subvert expectations immediately. "The worst part of [addiction] isn\'t [the obvious]. It\'s [the thing that actually haunts you]." Make people curious about what the real worst part is.'
-          },
-          {
-            name: 'letter-to-self',
-            arc: 'Hey, it\'s future you → I know what you\'re doing right now → Here\'s what\'s about to happen → But you survive. And here\'s proof. → CTA',
-            hook: 'Write directly to the past self in second person. Intimate. Knowing. Like a time traveler who can see everything but can\'t stop it — only offer hope from the other side.'
-          },
-          {
-            name: 'the-object',
-            arc: 'This [object] used to mean [addiction thing] → Now it means [recovery thing] → The day the meaning changed → What it\'ll mean tomorrow → CTA',
-            hook: 'Focus on a single physical object — a lighter, a bottle opener, a phone notification sound, a bathroom mirror. Objects carry emotional weight. Make it symbolic.'
-          },
+          // ── PERSONAL / CONFESSIONAL ──
+          { name: 'nobody-told-me', arc: 'The thing nobody warned me about → The ugly reality → The moment it hit me → What I know now → CTA', hook: 'Start with "Nobody told me that..." followed by a hyper-specific, unexpected truth. Something that makes someone in recovery go "holy shit, yes."' },
+          { name: 'the-last-time', arc: 'The last time I [used] → What happened next → The face of the person who found me → The version of me now → CTA', hook: 'Paint a cinematic first slide — a single sensory detail from the last time. The taste, the sound, the text message, the exact location.' },
+          { name: 'the-lie-i-told', arc: 'The lie I told everyone → The lie I told myself → The truth I couldn\'t say → Saying it now → CTA', hook: 'Start with the SPECIFIC lie. "I\'m just tired." "I only had two." "I can stop whenever I want." One sentence millions have said.' },
+          { name: 'they-dont-know', arc: 'What people see → What they don\'t see → The moment I almost got caught → Why I stopped hiding → CTA', hook: 'Contrast the public persona vs private reality. The functional addict reveal.' },
+          { name: 'letter-to-self', arc: 'Hey, it\'s future you → I know what you\'re doing right now → Here\'s what happens → But you survive → CTA', hook: 'Write directly to the past self in second person. Intimate. Knowing. A time traveler who offers hope from the other side.' },
+          { name: 'the-first-time', arc: 'The first time I tried it → What it felt like → When it stopped feeling like that → What I chase now instead → CTA', hook: 'Describe the very first experience in vivid detail — the innocence of it, the excitement, the moment before everything changed.' },
+          { name: 'the-secret-routine', arc: 'My secret routine → The lengths I went to hide it → The exhaustion of the performance → The relief of stopping → CTA', hook: 'Describe the elaborate daily routine of hiding addiction. The specific steps, timing, locations. The exhausting choreography nobody knew about.' },
+
+          // ── FINANCIAL / NUMBERS ──
+          { name: 'the-math', arc: 'The dollar amount → What that could have been → The real cost (not money) → What I invest in now → CTA', hook: 'Open with a SPECIFIC dollar amount that makes people gasp. "$47,000 in 3 years." "1,460 mornings." Numbers stop scrollers.' },
+          { name: 'the-receipt', arc: 'The bank statement → The pattern I couldn\'t unsee → What I\'d been telling myself → What that money means now → CTA', hook: 'Describe the moment of looking at a bank/credit card statement and seeing the addiction spelled out in transactions. Specific amounts, specific vendors.' },
+          { name: 'the-calculator', arc: 'I opened my calculator → Added up [specific thing] → The total was → Now I spend it on → CTA', hook: 'Frame it as doing actual math in real time. "I multiplied $14 x 5 nights x 52 weeks..." Make the reader do the math with you.' },
+
+          // ── RELATIONSHIPS ──
+          { name: 'the-text-message', arc: 'The text I sent at [time] → What I meant vs said → What they replied (or didn\'t) → The sober conversation → CTA', hook: 'Start with a text-message-style confession — the kind typed at 2am and deleted in the morning.' },
+          { name: 'the-phone-call', arc: 'The call I got → What they said → What I heard → What I did about it → CTA', hook: 'Start with a phone call that changed everything — from a parent, a doctor, a friend, an ex. The exact words they said.' },
+          { name: 'the-kid-moment', arc: 'What my kid saw → What they said → What I felt → What I decided → CTA', hook: 'A child\'s innocent observation that shattered the illusion. Kids don\'t sugarcoat. The exact words, the exact moment.' },
+          { name: 'the-friend-who-left', arc: 'The friend who stopped calling → What they tried before giving up → The voicemail I never answered → Finding them again → CTA', hook: 'Tell the story of the friend who loved you enough to leave. The slow fade, the final attempt, the silence.' },
+          { name: 'the-apology', arc: 'The apology I owe → What I did → Why I haven\'t said it → What I\'d say now → CTA', hook: 'Start with who you owe the apology to and what you did — specific, raw, uncomfortable.' },
+          { name: 'the-partner', arc: 'What my partner pretended not to notice → The argument we kept having → The night they almost left → What we\'re building now → CTA', hook: 'The addiction from your partner\'s perspective. The things they saw but didn\'t say. The toll on love.' },
+
+          // ── BODY / HEALTH ──
+          { name: 'the-mirror', arc: 'What I saw in the mirror → What I told myself → What my body was actually saying → What the mirror shows now → CTA', hook: 'Describe the specific physical change you noticed — the face, the eyes, the skin, the weight. The moment you didn\'t recognize yourself.' },
+          { name: 'the-doctor', arc: 'What the doctor said → The test results → What I did with that information → The follow-up appointment → CTA', hook: 'Start with the doctor\'s exact words or the specific medical finding. Lab numbers, diagnoses, warnings. Clinical reality hitting.' },
+          { name: 'the-sleep', arc: 'What sleep looked like using → The 3am ritual → The first real night of sleep sober → What mornings feel like now → CTA', hook: 'Describe the specific sleep patterns of addiction — the insomnia, the passing out, the nightmares, the sweats. Then the miracle of real sleep.' },
+
+          // ── IDENTITY / PSYCHOLOGICAL ──
+          { name: 'the-worst-part', arc: 'The worst part isn\'t what you think → Not the [obvious] → It\'s the [gut-punch] → What nobody tells you about after → CTA', hook: 'Subvert expectations. "The worst part isn\'t [obvious thing]. It\'s [the thing that actually haunts you]."' },
+          { name: 'the-object', arc: 'This [object] used to mean [addiction] → Now it means [recovery] → The day it changed → What it\'ll mean tomorrow → CTA', hook: 'Focus on a single physical object — a lighter, a bottle opener, a notification sound. Objects carry emotional weight.' },
+          { name: 'before-after-internal', arc: 'What [time of day] looked like using → The ritual → What it looks like sober → The small thing that made me cry → CTA', hook: 'Describe a hyper-specific time of day. "Every Sunday at 11am" or "The first 4 minutes after waking up."' },
+          { name: 'the-personality', arc: 'The personality trait I thought was me → How it was actually the addiction → Who I am without it → The surprise of meeting myself → CTA', hook: 'Name a specific personality trait people associated with you that was actually the substance — "the fun one," "the wild one," "the life of the party."' },
+          { name: 'the-excuse', arc: 'My best excuse → Why it worked so well → When it stopped working → What honesty sounds like → CTA', hook: 'Start with your single best, most bulletproof excuse. The one that fooled everyone. Deliver it like you\'re still selling it.' },
+          { name: 'two-versions', arc: 'The daytime version of me → The nighttime version → The moment they collided → Which one survived → CTA', hook: 'Describe living as two completely different people. The mask and the face behind it. When the worlds finally overlapped.' },
+
+          // ── MOMENTS / TURNING POINTS ──
+          { name: 'the-quiet-moment', arc: 'It wasn\'t a dramatic rock bottom → It was a Tuesday afternoon → The small ordinary thing that broke me → Why quiet moments hit harder → CTA', hook: 'Describe the anticlimactic moment of realization — not a car crash or an arrest, but a quiet Tuesday that somehow broke through.' },
+          { name: 'the-google-search', arc: 'The search I typed at 3am → The results I found → What I did the next morning → Where that search led me → CTA', hook: 'Start with the exact Google search — "am I an alcoholic quiz," "how to quit without anyone knowing," "is it normal to..." Raw browser history energy.' },
+          { name: 'the-voicemail', arc: 'The voicemail I left → What I said vs what I meant → Whether they ever heard it → The conversation I had sober → CTA', hook: 'Start with the drunk voicemail or text — the rambling, the honesty that only comes when you\'re not sober enough to filter.' },
+          { name: 'the-relapse', arc: 'The day I relapsed → What triggered it → What was different this time → Why falling doesn\'t mean failing → CTA', hook: 'Start with the specific moment of relapse — not shame, but honesty. What happened, how it felt, and the crucial difference the second time.' },
+          { name: 'the-holiday', arc: 'The holiday/event I dreaded sober → What I expected → What actually happened → The tradition I\'m building now → CTA', hook: 'Name the specific holiday, birthday, or social event. The fear of being sober at it. The surprise of what it actually felt like.' },
+
+          // ── SOCIAL / CULTURAL ──
+          { name: 'the-normalization', arc: 'The meme/joke that made everyone laugh → Why I laughed too → What it\'s actually describing → What we should be saying → CTA', hook: 'Start with a specific social media meme or cultural joke about the substance — wine o\'clock, "I need a drink," bet slip bragging. Deconstruct it.' },
+          { name: 'the-enabler', arc: 'The person who always said yes → Why they kept enabling → The day they stopped → What real support looks like → CTA', hook: 'Describe the specific person who made it easy to keep going — the drinking buddy, the dealer who "checked in," the partner who looked away.' },
+          { name: 'the-industry', arc: 'How [industry] profits from addiction → The marketing they use → What they don\'t show → The real product is you → CTA', hook: 'Call out the specific industry — Big Alcohol, gambling apps, pharma. Name the marketing tactics. Follow the money.' },
+          { name: 'the-group-chat', arc: 'The group chat that only activated at night → The messages I\'d send → The morning regret → The group chat I\'m in now → CTA', hook: 'Describe the specific friend group dynamic around the substance. The enabling texts, the weekend plans, the unspoken rules.' },
+
+          // ── RECOVERY WINS / HOPE ──
+          { name: 'the-first-week', arc: 'Day 1 → Day 3 (the worst) → Day 5 (the surprise) → Day 7 (the realization) → CTA', hook: 'Hour-by-hour or day-by-day account of the first week. Brutal honesty about withdrawal, cravings, and the tiny moments of clarity.' },
+          { name: 'the-boring-life', arc: 'People said sobriety is boring → What my "boring" Saturday looks like → What I can actually feel now → Why boring is the point → CTA', hook: 'Lean into the "boring" criticism head-on. Describe a mundane sober day in beautiful detail. Make ordinary feel luxurious.' },
+          { name: 'the-money-back', arc: 'Month 1 savings → What I bought → Month 6 savings → The account balance that made me cry → CTA', hook: 'Track the literal money saved month by month. Specific purchases, specific account balances. The financial glow-up.' },
+          { name: 'the-taste', arc: 'The first meal I actually tasted → The first song that made me feel something → The first morning I wasn\'t afraid → The first time I was bored and okay with it → CTA', hook: 'Describe the sensory experience of sobriety — when colors, flavors, music, and emotions come back online after being numbed.' },
+          { name: 'the-dream', arc: 'The dream I had about using → How real it felt → Waking up and realizing → What recovery dreams mean → CTA', hook: 'Start with a vivid using dream — common in recovery. The panic of waking up thinking you relapsed. The relief and what it teaches you.' },
+          { name: 'the-thing-i-got-back', arc: 'The thing I lost to addiction → How long it was gone → The day I got it back → What it means now → CTA', hook: 'Name ONE specific thing — custody, a friendship, a job, trust, your health, your creativity. The full circle story of losing and reclaiming it.' },
         ];
 
         const angle = STORY_ANGLES[Math.floor(Math.random() * STORY_ANGLES.length)];
