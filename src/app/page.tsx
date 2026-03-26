@@ -22,11 +22,11 @@ export default function Home() {
           🌻 Sunflower Carousel Generator
         </h1>
         <p className="text-lg text-gray-500 max-w-xl mx-auto">
-          Pick an addiction niche → choose a design style → get 5 AI images that tell a sobriety story. Ready to post.
+          Pick an addiction niche → choose a text &amp; design style → get 7 AI images that tell a sobriety story. Ready to post.
         </p>
       </div>
 
-      <div className="flex items-center justify-center gap-3 mb-10 text-sm">
+      <div className="flex items-center justify-center gap-3 mb-10 text-sm flex-wrap">
         <div className="flex items-center gap-2 px-4 py-2 rounded-full font-medium text-white" style={{ background: '#4A1A8A' }}>
           <span className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center text-xs font-bold">1</span>
           Pick Niche
@@ -34,11 +34,16 @@ export default function Home() {
         <div className="w-8 h-px bg-gray-300" />
         <div className="flex items-center gap-2 px-4 py-2 rounded-full text-gray-400 bg-gray-100">
           <span className="w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center text-xs font-bold">2</span>
-          Design Style
+          Text Style
         </div>
         <div className="w-8 h-px bg-gray-300" />
         <div className="flex items-center gap-2 px-4 py-2 rounded-full text-gray-400 bg-gray-100">
           <span className="w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center text-xs font-bold">3</span>
+          Design Style
+        </div>
+        <div className="w-8 h-px bg-gray-300" />
+        <div className="flex items-center gap-2 px-4 py-2 rounded-full text-gray-400 bg-gray-100">
+          <span className="w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center text-xs font-bold">4</span>
           Generate
         </div>
       </div>

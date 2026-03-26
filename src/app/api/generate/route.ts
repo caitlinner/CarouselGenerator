@@ -43,7 +43,7 @@ export async function POST(req: NextRequest) {
       }
 
       try {
-        const { niche, styleId } = await req.json();
+        const { niche, styleId, textStyle } = await req.json();
         const nicheCtx = NICHE_CONTEXT[niche] || 'addiction recovery';
         const stylePrompt = STYLE_PROMPTS[styleId] || STYLE_PROMPTS['pixar-animals'];
 
@@ -131,7 +131,37 @@ export async function POST(req: NextRequest) {
         };
         const nicheName = NICHE_NAMES[niche] || niche;
 
-        const storyPrompt = `You write carousel text for addiction recovery content on TikTok and Instagram. The content must be SPECIFIC to the addiction type — not generic recovery advice.
+        let storyPrompt: string;
+
+        if (textStyle === 'motivational') {
+          storyPrompt = `You write carousel text for addiction recovery content on TikTok and Instagram. The content must be SPECIFIC to the addiction type — not generic recovery advice.
+
+ADDICTION TYPE: ${nicheName}
+NICHE CONTEXT: ${nicheCtx}
+
+Randomization seed (use this to vary your creative choices): ${randomSeed}
+
+TEXT STYLE: MOTIVATIONAL QUOTES
+Generate exactly 7 slides.
+
+SLIDES 1-6: Each slide is a powerful, raw motivational quote about quitting ${nicheName}. These must be SPECIFIC to this addiction — not generic inspiration. They should hit hard emotionally, feel like they came from someone who lived it, and be highly shareable. Each quote should be a standalone statement.
+
+SLIDE 7 (CTA):
+- Text MUST be exactly: "Quit with the Sunflower Sober app 🌻"
+- No variations. This exact text.
+
+ABSOLUTE BANNED PHRASES (instant reject if any appear):
+"one day at a time", "recovery is a journey", "you are not alone", "it gets better", "rock bottom" (as motivation), "breaking free", "chose life", "found the light", "finally showing up", "rewrite your story", "you're worth it", "believe in yourself", "light at the end", "stronger than you know", "recovery is possible", "take it one step", "new chapter", "healing journey", "self-love", "your story isn't over", "show up for myself", "choose smarter", "staying consistent", "morning gratitude"
+
+VOICE: Write like someone who's been through THIS SPECIFIC addiction and is sharing what they learned. Not a therapist, not a brand — a real person.
+
+${sceneInstr ? `IMAGE SCENE RULES: ${sceneInstr}` : ''}
+
+Return ONLY valid JSON:
+{"title":"carousel title","slides":[{"text":"overlay text","scene":"detailed image scene description"}]}`;
+        } else {
+          // Educational (default)
+          storyPrompt = `You write carousel text for addiction recovery content on TikTok and Instagram. The content must be SPECIFIC to the addiction type — not generic recovery advice.
 
 ADDICTION TYPE: ${nicheName}
 NICHE CONTEXT: ${nicheCtx}
@@ -142,25 +172,28 @@ Hook approach: ${angle.hook}
 
 Randomization seed (use this to vary your creative choices): ${randomSeed}
 
-SLIDE 1 RULES (THE HOOK):
-- MUST explicitly name the addiction. Examples for alcohol: "5 things that changed when I stopped drinking", "How I finally broke free from the weekend drinking cycle", "Alcohol is one of those things that when you remove it from your life, it also removes a lot of problems from your life"
-- Examples for cannabis: "What happened when I finally put down the weed", "5 things nobody tells you about quitting weed"
-- Examples for gambling: "What happened when I deleted the betting apps", "The real cost of my gambling addiction wasn't money"
+TEXT STYLE: EDUCATIONAL LISTICLE
+Generate exactly 7 slides.
+
+SLIDE 1 RULES (THE TITLE HOOK):
+- MUST explicitly name the addiction. This is a bold listicle title or hook statement.
+- Examples: "5 things that helped me stay sober", "5 Sobriety Quotes that Helped On my Hardest Days", "How I Finally Broke Free From the Weekend Drinking Cycle", "5 Advice to Quit Coke", "5 Rules to Protect My Sobriety", "5 Truths About Fentanyl"
 - The hook should be a relatable insight, a listicle promise, or a bold statement that NAMES THE SUBSTANCE/BEHAVIOR
 - Can be longer than 10 words — clarity and relatability matter more than brevity on the hook
 
-SLIDE 2-4 RULES (NICHE-SPECIFIC CONTENT):
+SLIDES 2-6 RULES (NUMBERED EDUCATIONAL CONTENT):
+- 5 numbered educational tips, facts, or lessons about quitting ${nicheName}
 - Each slide MUST contain details SPECIFIC to this addiction type. If you swapped the addiction name, the slide should NOT make sense.
 - For alcohol: mention hangovers, wine, beer, bars, drinking alone, morning regret, the taste, the bottle, blackouts
 - For cannabis: mention smoking, the high, wake-and-bake, munchies, brain fog, dreams coming back, motivation returning
 - For gambling: mention betting apps, parlays, the casino, checking odds, the losses, the "win it back" feeling
 - For meth: mention staying up for days, the crash, the pipe, shadow people, weight loss, skin picking
-- Slides can be numbered tips ("1. Energy Returned"), lessons learned, or confessional statements
+- Format each as a numbered item: "1. [Title]" followed by a brief explanation
 - Keep text conversational and relatable — like someone sharing their real experience
 - Each slide should be a complete thought that stands on its own
 
-SLIDE 5 (CTA):
-- Text MUST be exactly: "Quit today with the Sunflower Sober app 🌻"
+SLIDE 7 (CTA):
+- Text MUST be exactly: "Quit with the Sunflower Sober app 🌻"
 - No variations. This exact text.
 
 ABSOLUTE BANNED PHRASES (instant reject if any appear):
@@ -174,6 +207,7 @@ ${sceneInstr ? `IMAGE SCENE RULES: ${sceneInstr}` : ''}
 
 Return ONLY valid JSON:
 {"title":"carousel title","slides":[{"text":"overlay text","scene":"detailed image scene description"}]}`;
+        }
 
         const storyRes = await fetch(
           `${BASE_URL}/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`,
@@ -220,9 +254,9 @@ Return ONLY valid JSON:
         // Step 2: Generate images using Imagen 4
         const images: string[] = [];
 
-        for (let i = 0; i < Math.min(5, story.slides.length); i++) {
+        for (let i = 0; i < Math.min(7, story.slides.length); i++) {
           const slide = story.slides[i];
-          send({ progress: 10 + (i * 18) });
+          send({ progress: 10 + (i * 12) });
 
           const imagePrompt = `${stylePrompt}
 
@@ -232,7 +266,7 @@ IMPORTANT: Display this text prominently on the image in large bold white letter
 
 The text must be the focal point, large, centered, and clearly readable on mobile. White text with thick black outline. The background scene should support the emotional message. 3:4 portrait aspect ratio for Instagram/TikTok carousel.
 
-This is slide ${i + 1} of 5 in a carousel series. Visual consistency across all slides is critical.`;
+This is slide ${i + 1} of 7 in a carousel series. Visual consistency across all slides is critical.`;
 
           let imageData: string | null = null;
 

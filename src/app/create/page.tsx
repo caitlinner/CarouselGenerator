@@ -15,6 +15,23 @@ const NICHE_LABELS: Record<string, string> = {
   'fentanyl': '⚠️ Fentanyl Awareness & Recovery',
 };
 
+const TEXT_STYLES = [
+  {
+    id: 'educational',
+    emoji: '📚',
+    label: 'Educational',
+    desc: 'Listicle-style content — a bold title hook on slide 1, then 5 numbered tips, facts, or lessons on slides 2-6',
+    preview: 'linear-gradient(135deg, #4A1A8A 0%, #8B5DC8 100%)',
+  },
+  {
+    id: 'motivational',
+    emoji: '💪',
+    label: 'Motivational',
+    desc: '6 powerful motivational quotes about quitting — raw, emotional, and shareable',
+    preview: 'linear-gradient(135deg, #F5A623 0%, #FF6B6B 100%)',
+  },
+];
+
 const IMAGE_STYLES = [
   {
     id: 'pixar-animals',
@@ -58,7 +75,8 @@ function CreateContent() {
   const router = useRouter();
   const niche = searchParams.get('niche') || 'general-sobriety';
 
-  const [step, setStep] = useState<'style' | 'generating' | 'preview'>('style');
+  const [step, setStep] = useState<'textStyle' | 'style' | 'generating' | 'preview'>('textStyle');
+  const [selectedTextStyle, setSelectedTextStyle] = useState<string | null>(null);
   const [selectedStyle, setSelectedStyle] = useState<string | null>(null);
   const [images, setImages] = useState<string[]>([]);
   const [slideTexts, setSlideTexts] = useState<string[]>([]);
@@ -66,7 +84,7 @@ function CreateContent() {
   const [genProgress, setGenProgress] = useState(0);
   const [error, setError] = useState('');
 
-  const activeStep = step === 'style' ? 2 : 3;
+  const activeStep = step === 'textStyle' ? 2 : step === 'style' ? 3 : 4;
 
   async function generateCarousel(styleId: string) {
     setSelectedStyle(styleId);
@@ -78,7 +96,7 @@ function CreateContent() {
       const res = await fetch('/api/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ niche, styleId }),
+        body: JSON.stringify({ niche, styleId, textStyle: selectedTextStyle }),
       });
       if (!res.ok) throw new Error(await res.text());
 
@@ -118,11 +136,12 @@ function CreateContent() {
   }
 
   const StepBar = () => (
-    <div className="flex items-center justify-center gap-3 mb-8 text-sm">
+    <div className="flex items-center justify-center gap-3 mb-8 text-sm flex-wrap">
       {[
         { num: 1, label: 'Niche' },
-        { num: 2, label: 'Design Style' },
-        { num: 3, label: 'Generate' },
+        { num: 2, label: 'Text Style' },
+        { num: 3, label: 'Design Style' },
+        { num: 4, label: 'Generate' },
       ].map((s, i) => (
         <div key={s.num} className="flex items-center gap-3">
           {i > 0 && <div className="w-8 h-px bg-gray-300" />}
@@ -142,8 +161,8 @@ function CreateContent() {
     </div>
   );
 
-  // Style selection
-  if (step === 'style') {
+  // Text style selection
+  if (step === 'textStyle') {
     return (
       <div className="max-w-4xl mx-auto px-6 py-10">
         <button onClick={() => router.push('/')} className="text-sm text-gray-500 hover:text-purple-600 mb-6 inline-flex items-center gap-1">
@@ -156,7 +175,50 @@ function CreateContent() {
           <h1 className="text-2xl font-bold" style={{ color: '#4A1A8A' }}>
             {NICHE_LABELS[niche] || niche}
           </h1>
-          <p className="text-gray-500 mt-1">Choose a design style — clicking generates your 5-slide carousel instantly</p>
+          <p className="text-gray-500 mt-1">Choose a text prompt style for your 7-slide carousel</p>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mt-8">
+          {TEXT_STYLES.map(s => (
+            <button
+              key={s.id}
+              onClick={() => { setSelectedTextStyle(s.id); setStep('style'); }}
+              className="w-full text-left bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-lg hover:border-purple-200 transition-all overflow-hidden group"
+            >
+              <div className="flex flex-col items-center p-8 text-center">
+                <div className="w-20 h-20 rounded-2xl flex items-center justify-center text-4xl mb-4" style={{ background: s.preview }}>
+                  {s.emoji}
+                </div>
+                <div className="font-bold text-lg text-gray-900 group-hover:text-purple-700 transition-colors mb-2">
+                  {s.label}
+                </div>
+                <div className="text-sm text-gray-500">{s.desc}</div>
+              </div>
+            </button>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  // Design style selection
+  if (step === 'style') {
+    const textStyleObj = TEXT_STYLES.find(t => t.id === selectedTextStyle);
+    return (
+      <div className="max-w-4xl mx-auto px-6 py-10">
+        <button onClick={() => setStep('textStyle')} className="text-sm text-gray-500 hover:text-purple-600 mb-6 inline-flex items-center gap-1">
+          ← Back to text style
+        </button>
+
+        <StepBar />
+
+        <div className="mb-2">
+          <h1 className="text-2xl font-bold" style={{ color: '#4A1A8A' }}>
+            {NICHE_LABELS[niche] || niche}
+          </h1>
+          <p className="text-gray-500 mt-1">
+            {textStyleObj?.emoji} {textStyleObj?.label} — Now choose a design style to generate your 7-slide carousel
+          </p>
         </div>
 
         {error && <div className="mb-6 p-4 rounded-xl bg-red-50 text-red-600 text-sm">{error}</div>}
@@ -178,7 +240,7 @@ function CreateContent() {
                   </div>
                   <div className="text-sm text-gray-500 mb-3">{s.desc}</div>
                   <div className="inline-flex items-center gap-2 text-xs font-medium px-3 py-1.5 rounded-full" style={{ background: '#F5C518', color: '#1a1a2e' }}>
-                    🎨 Click to generate 5 slides
+                    🎨 Click to generate 7 slides
                   </div>
                 </div>
               </div>
@@ -199,7 +261,7 @@ function CreateContent() {
           Generating your carousel...
         </h2>
         <p className="text-gray-500 mb-2">{styleObj?.label} — {NICHE_LABELS[niche]}</p>
-        <p className="text-sm text-purple-400 mb-8">Creating 5 images with sobriety text overlays</p>
+        <p className="text-sm text-purple-400 mb-8">Creating 7 images with sobriety text overlays</p>
 
         <div className="w-full bg-gray-200 rounded-full h-3 mb-4 overflow-hidden">
           <div
@@ -208,12 +270,15 @@ function CreateContent() {
           />
         </div>
         <p className="text-sm text-gray-400">
-          {genProgress < 15 && 'Writing your sobriety story...'}
-          {genProgress >= 15 && genProgress < 30 && 'Generating slide 1...'}
-          {genProgress >= 30 && genProgress < 50 && 'Generating slide 2...'}
-          {genProgress >= 50 && genProgress < 70 && 'Generating slides 3-4...'}
-          {genProgress >= 70 && genProgress < 90 && 'Generating slide 5...'}
-          {genProgress >= 90 && 'Finalizing...'}
+          {genProgress < 10 && 'Writing your sobriety story...'}
+          {genProgress >= 10 && genProgress < 22 && 'Generating slide 1...'}
+          {genProgress >= 22 && genProgress < 34 && 'Generating slide 2...'}
+          {genProgress >= 34 && genProgress < 46 && 'Generating slide 3...'}
+          {genProgress >= 46 && genProgress < 58 && 'Generating slide 4...'}
+          {genProgress >= 58 && genProgress < 70 && 'Generating slide 5...'}
+          {genProgress >= 70 && genProgress < 82 && 'Generating slide 6...'}
+          {genProgress >= 82 && genProgress < 94 && 'Generating slide 7...'}
+          {genProgress >= 94 && 'Finalizing...'}
         </p>
 
         {storyTitle && (
@@ -244,11 +309,11 @@ function CreateContent() {
           <h1 className="text-2xl font-bold" style={{ color: '#4A1A8A' }}>
             {storyTitle || 'Your Carousel'}
           </h1>
-          <p className="text-gray-500 text-sm mt-1">5 slides — {styleObj?.label} — {NICHE_LABELS[niche]}</p>
+          <p className="text-gray-500 text-sm mt-1">7 slides — {styleObj?.label} — {NICHE_LABELS[niche]}</p>
         </div>
         <div className="flex gap-3">
           <button
-            onClick={() => { setStep('style'); setImages([]); setSlideTexts([]); setStoryTitle(''); }}
+            onClick={() => { setStep('textStyle'); setImages([]); setSlideTexts([]); setStoryTitle(''); setSelectedTextStyle(null); }}
             className="px-4 py-2 rounded-lg text-sm font-medium border border-gray-200 hover:bg-gray-50"
           >
             ← New carousel
@@ -271,7 +336,7 @@ function CreateContent() {
       </div>
 
       {/* Grid */}
-      <div className="grid grid-cols-5 gap-4 mb-8">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 mb-8">
         {images.map((img, i) => (
           <div key={i} className="relative group">
             <div className="aspect-[4/5] rounded-xl overflow-hidden bg-gray-100 border border-gray-200 shadow-sm">
