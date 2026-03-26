@@ -113,6 +113,91 @@ async function compositeTextOnImage(bgDataUrl: string, text: string, slideIndex:
   });
 }
 
+// Composite: background + screenshot overlay (medium size, centered) + text at bottom
+async function compositeScreenshotSlide(bgDataUrl: string, screenshotUrl: string, text: string): Promise<string> {
+  return new Promise((resolve) => {
+    const bg = new Image();
+    bg.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = bg.width;
+      canvas.height = bg.height;
+      const ctx = canvas.getContext('2d')!;
+
+      // Draw background
+      ctx.drawImage(bg, 0, 0);
+
+      // Load and draw screenshot overlay
+      const screenshot = new Image();
+      screenshot.onload = () => {
+        // Medium size — 60% of image width, centered, in upper portion
+        const targetWidth = bg.width * 0.6;
+        const scale = targetWidth / screenshot.width;
+        const targetHeight = screenshot.height * scale;
+        const x = (bg.width - targetWidth) / 2;
+        const y = bg.height * 0.08;
+
+        // Draw rounded rectangle shadow
+        const radius = 20;
+        ctx.save();
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.4)';
+        ctx.shadowBlur = 30;
+        ctx.shadowOffsetY = 10;
+        ctx.beginPath();
+        ctx.roundRect(x, y, targetWidth, targetHeight, radius);
+        ctx.fillStyle = 'white';
+        ctx.fill();
+        ctx.restore();
+
+        // Clip and draw screenshot with rounded corners
+        ctx.save();
+        ctx.beginPath();
+        ctx.roundRect(x, y, targetWidth, targetHeight, radius);
+        ctx.clip();
+        ctx.drawImage(screenshot, x, y, targetWidth, targetHeight);
+        ctx.restore();
+
+        // Draw text at bottom
+        const fontSize = bg.width * 0.055;
+        ctx.font = `bold ${fontSize}px "Helvetica Neue", Helvetica, Arial, sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'top';
+        const textY = y + targetHeight + bg.height * 0.05;
+
+        // Outline
+        ctx.strokeStyle = 'rgba(0, 0, 0, 0.9)';
+        ctx.lineWidth = fontSize * 0.12;
+        ctx.lineJoin = 'round';
+        ctx.miterLimit = 2;
+        ctx.strokeText(text, bg.width / 2, textY);
+
+        // Fill
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.7)';
+        ctx.shadowBlur = fontSize * 0.25;
+        ctx.fillStyle = 'white';
+        ctx.fillText(text, bg.width / 2, textY);
+
+        resolve(canvas.toDataURL('image/png'));
+      };
+      screenshot.src = screenshotUrl;
+    };
+    bg.src = bgDataUrl;
+  });
+}
+
+// Map niche to tracker screenshot filename
+const TRACKER_SCREENSHOTS: Record<string, string> = {
+  'general-sobriety': '/screenshots/tracker/general-sobriety.jpg',
+  'alcohol': '/screenshots/tracker/alcohol.jpg',
+  'gambling': '/screenshots/tracker/gambling.jpg',
+  'meth': '/screenshots/tracker/meth.jpg',
+  'heroin': '/screenshots/tracker/heroin.jpg',
+  'mdma': '/screenshots/tracker/mdma.jpg',
+  'cannabis': '/screenshots/tracker/cannabis.jpg',
+  'cocaine': '/screenshots/tracker/cocaine.jpg',
+  'fentanyl': '/screenshots/tracker/fentanyl.jpg',
+};
+const COMMUNITY_SCREENSHOT = '/screenshots/community.jpg';
+
 type Step = 'style' | 'textStyle' | 'generating' | 'preview';
 
 function CreateContent() {
@@ -182,11 +267,13 @@ function CreateContent() {
                   setSlideTexts(parsed.slideTexts);
                 }
                 if (parsed.images) {
-                  // Images received — composite text on top
+                  // Images received — composite text on slides 1-7, then screenshot slides 8-9
                   setGenStatus('Compositing text onto images...');
-                  setGenProgress(95);
+                  setGenProgress(90);
                   const composited: string[] = [];
-                  for (let i = 0; i < parsed.images.length; i++) {
+                  
+                  // Slides 1-7: text overlay
+                  for (let i = 0; i < Math.min(7, parsed.images.length); i++) {
                     if (parsed.images[i] && localSlideTexts[i]) {
                       const result = await compositeTextOnImage(parsed.images[i], localSlideTexts[i], i, finalStyleId ?? '');
                       composited.push(result);
@@ -194,6 +281,24 @@ function CreateContent() {
                       composited.push(parsed.images[i] || '');
                     }
                   }
+
+                  // Slide 8: tracker screenshot
+                  setGenStatus('Adding tracker screenshot...');
+                  setGenProgress(95);
+                  if (parsed.images[7]) {
+                    const trackerUrl = TRACKER_SCREENSHOTS[niche] || TRACKER_SCREENSHOTS['general-sobriety'];
+                    const slide8 = await compositeScreenshotSlide(parsed.images[7], trackerUrl, 'Track your sobriety');
+                    composited.push(slide8);
+                  }
+
+                  // Slide 9: community screenshot
+                  setGenStatus('Adding community screenshot...');
+                  setGenProgress(98);
+                  if (parsed.images[8]) {
+                    const slide9 = await compositeScreenshotSlide(parsed.images[8], COMMUNITY_SCREENSHOT, 'Connect with a sober community');
+                    composited.push(slide9);
+                  }
+
                   setFinalImages(composited);
                   setStep('preview');
                 }
@@ -328,7 +433,7 @@ function CreateContent() {
       <div className="flex items-center justify-between mb-8 flex-wrap gap-4">
         <div>
           <h1 className="text-2xl font-bold" style={{ color: '#4A1A8A' }}>{storyTitle || 'Your Carousel'}</h1>
-          <p className="text-gray-500 text-sm mt-1">7 slides — {styleObj?.label} — {textStyleObj?.label} — {NICHE_LABELS[niche]}</p>
+          <p className="text-gray-500 text-sm mt-1">9 slides — {styleObj?.label} — {textStyleObj?.label} — {NICHE_LABELS[niche]}</p>
         </div>
         <div className="flex gap-3">
           <button onClick={() => { setStep('style'); setFinalImages([]); setSlideTexts([]); setStoryTitle(''); }}

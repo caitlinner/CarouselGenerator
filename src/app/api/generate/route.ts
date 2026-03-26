@@ -333,19 +333,26 @@ Return ONLY valid JSON with exactly 7 slides:
         // Step 2: Generate images using Imagen 4 (scenes influenced by text)
         const images: string[] = [];
 
-        for (let i = 0; i < Math.min(7, story.slides.length); i++) {
-          const slide = story.slides[i];
-          send({ progress: 10 + (i * 12), status: `Generating image ${i + 1} of 7...` });
+        // Generate 9 images: 7 for content slides + 2 for screenshot overlay slides
+        const totalImages = 9;
+        for (let i = 0; i < totalImages; i++) {
+          const slide = i < story.slides.length ? story.slides[i] : null;
+          const extraScenes = [
+            'A warm, inviting scene that conveys tracking progress and personal growth',
+            'A welcoming, communal scene that conveys connection, support, and belonging',
+          ];
+          const sceneText = slide ? slide.scene : extraScenes[i - 7] || extraScenes[0];
+          send({ progress: 10 + (i * 10), status: `Generating image ${i + 1} of ${totalImages}...` });
 
           const imagePrompt = `${stylePrompt}
 
-Scene: ${slide.scene}
+Scene: ${sceneText}
 
 Generate a beautiful background image with NO text, NO words, NO letters, NO numbers, NO captions, NO titles, NO watermarks anywhere in the image. The image must be completely free of any written content — pure visual scene only. Text will be added programmatically afterwards.
 
 3:4 portrait aspect ratio for Instagram/TikTok carousel. Leave space in the center for text overlay (slightly darker or simpler area in the middle third of the image works well).
 
-This is slide ${i + 1} of 7 in a carousel series. Visual consistency across all slides is critical.`;
+This is slide ${i + 1} of ${totalImages} in a carousel series. Visual consistency across all slides is critical.`;
 
           let imageData: string | null = null;
 
