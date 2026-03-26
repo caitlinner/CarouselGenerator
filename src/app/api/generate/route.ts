@@ -162,9 +162,20 @@ NICHE CONTEXT: ${nicheCtx}
 Randomization seed (use this to vary your creative choices): ${randomSeed}
 
 TEXT STYLE: MOTIVATIONAL QUOTES
+CONTENT ANGLE: ${angle.name.toUpperCase()} — ${angle.hook}
 Generate exactly 7 slides.
 
-SLIDES 1-6: Each slide is a powerful, raw motivational quote about quitting ${nicheName}. These must be SPECIFIC to this addiction — not generic inspiration. They should hit hard emotionally, feel like they came from someone who lived it, and be highly shareable. Each quote should be a standalone statement.
+SLIDE 1 (THE HOOK):
+- This is the attention-grabber. It MUST name ${nicheName} directly and hook the reader.
+- Examples of the vibe: "The hardest part of quitting ${nicheName} wasn't the withdrawal" / "Nobody warns you about the loneliness after you quit ${nicheName}" / "I didn't quit ${nicheName} because I was strong. I quit because I was tired."
+- Make it specific, emotional, and impossible to scroll past. Name the substance/behavior.
+
+SLIDES 2-6:
+- 5 powerful, raw motivational quotes about quitting ${nicheName}.
+- Each quote MUST reference specific details of THIS addiction — not generic inspiration that could apply to anything.
+- Use the content angle above to guide the emotional direction. Vary the tone: some angry, some vulnerable, some darkly funny, some triumphant.
+- Each quote should be a standalone statement that hits hard.
+- NEVER repeat themes across slides. Each must offer a genuinely different perspective or insight.
 
 SLIDE 7 (CTA):
 - Text MUST be exactly: Quit with the Sunflower Sober app
