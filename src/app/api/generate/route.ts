@@ -310,11 +310,13 @@ Return ONLY valid JSON with exactly 7 slides:
 {"title":"carousel title","slides":[{"text":"overlay text","scene":"detailed image scene description"},{"text":"...","scene":"..."},{"text":"...","scene":"..."},{"text":"...","scene":"..."},{"text":"...","scene":"..."},{"text":"...","scene":"..."},{"text":"...","scene":"..."}]}`;
         }
 
+        const textAbort = AbortSignal.timeout(30000); // 30s timeout for text gen
         const storyRes = await fetch(
           `${BASE_URL}/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`,
           {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
+            signal: textAbort,
             body: JSON.stringify({
               contents: [{ parts: [{ text: storyPrompt }] }],
               generationConfig: { temperature: 1.2, maxOutputTokens: 2048, thinkingConfig: { thinkingBudget: 0 } },
