@@ -454,6 +454,12 @@ function CreateContent() {
             className="px-4 py-2 rounded-lg text-sm font-medium border border-gray-200 hover:bg-gray-50">🔄 Regenerate</button>
           <button onClick={() => { setStep('textStyle'); setFinalImages([]); setSlideTexts([]); setStoryTitle(''); setSelectedStyle(null); setSelectedTextStyle(null); }}
             className="px-4 py-2 rounded-lg text-sm font-medium border border-gray-200 hover:bg-gray-50">← New carousel</button>
+          <button onClick={() => {
+            const saved = JSON.parse(localStorage.getItem('carousels') || '[]');
+            saved.unshift({ id: Date.now().toString(), title: storyTitle || 'Untitled Carousel', niche, images: finalImages, createdAt: new Date().toISOString() });
+            localStorage.setItem('carousels', JSON.stringify(saved));
+            alert('Saved to My Carousels!');
+          }} className="px-4 py-2 rounded-lg text-sm font-medium border border-gray-200 hover:bg-gray-50">💾 Save</button>
           <button onClick={() => { finalImages.forEach((img, i) => { const a = document.createElement('a'); a.href = img; a.download = `sunflower-carousel-${i + 1}.png`; a.click(); }); }}
             className="px-6 py-2 rounded-lg text-sm font-medium" style={{ background: '#F5C518', color: '#1a1a2e' }}>⬇️ Download All</button>
         </div>
